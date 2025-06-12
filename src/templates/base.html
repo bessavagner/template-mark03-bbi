@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+
+<html lang="pt-br" data-theme="baseinicial">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}Título do meu site{% endblock %}</title>
+        <link href="{{ static('css/styles.css?version=5') }}" rel="stylesheet">
+        <meta name="description" content="">
+        <meta name="keywords" content="">
+        <meta name="author" content="">
+        <script type="application/ld+json">
+            {
+              "@context": "https://schema.org",
+              "@type": "",
+              "name": "",
+              "image": "https://seusite.com/static/images/logo.png",
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "",
+                "addressLocality": "",
+                "addressRegion": "CE",
+                "postalCode": "63700-000",
+                "addressCountry": "BR"
+              },
+              "telephone": "+5588999999999",
+              "url": "https://seusite.com",
+              "openingHours": "Mo,Tu,We,Th,Fr 08:00-18:00"
+            }
+        </script>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700&family=Bebas+Neue&family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap"
+            rel="stylesheet">
+    </head>
+
+    <body class="relative overflow-x-hidden w-screen">
+        {% block header %}{% include 'includes/header.html' %}{% endblock %}
+        {% block content %}{% endblock %}
+        {% block footer %}{% include 'includes/footer.html' %}{% endblock %}
+    </body>
+
+</html>

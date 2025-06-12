@@ -1,0 +1,19 @@
+{
+  "name": "bitgovprocessor-tailwindcss",
+  "version": "1.1.1",
+  "description": "Tailwind setup for Vagner Bessa's templates",
+  "author": "bessavagner@gmail.com",
+  "license": "ISC",
+  "scripts": {
+    "start": "npm run dev",
+    "build": "npm run build:clean && npm run build:tailwind",
+    "build:clean": "rimraf ../static/css/styles.css",
+    "build:tailwind": "npx @tailwindcss/cli -i input.css -o styles.css --minify",
+    "dev": "npx @tailwindcss/cli -i input.css -o styles.css --watch"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.7",
+    "daisyui": "^5.0.35",
+    "tailwindcss": "^4.1.7"
+  }
+}
