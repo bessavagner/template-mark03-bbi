@@ -22,7 +22,7 @@ export const cardsData = [
     {
         title: "Resultados rápidos e visíveis",
         descriptions: [
-            "Motivação que impulsiona o início",
+            "Motivação que impulsiona",
             "Evolução constante",
             "Metas alcançadas",
         ],

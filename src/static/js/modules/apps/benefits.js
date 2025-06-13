@@ -2,15 +2,15 @@
 
 import { Component } from "../engine/core.js";
 import { Card, BulletList, CardList } from "../components/display.js";
-import { cardsData } from "./benefitsData.js?version=1";
+import { cardsData } from "./benefitsData.js?version=2";
 
 export class BenefitsCard extends Card {
     constructor(options = {}) {
         const {title = "", descriptions = [], svg = ""} = options;
         super();
-        this.setClassList("card w-96 md:h-[500px] bg-base-300 rounded-lg transition-all duration-300 shadow-neon");
+        this.setClassList("card w-96 md:h-[500px] bg-base-300 rounded-lg transition-all duration-300 hover:shadow-neon hover:scale-105");
         this.cardBody.setClassList("card-body max-w-full justify-center m-auto");
-        this.cardTitle.setClassList("mt-4 text-center text-xl md:text-2xl font-heading barlow-condensed-regular");
+        this.cardTitle.setClassList("mt-4 text-center text-xl md:text-4xl font-heading barlow-condensed-regular px-2");
 
         this.svgWrapper = new Component("div", "flex flex-col items-center mb-4").setContent(svg).render({target: this.cardBody.element});
         this.renderTitle(title);
