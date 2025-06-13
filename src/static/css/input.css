@@ -72,6 +72,14 @@
       0 0 24px var(--color-primary),
       0 0 48px var(--color-primary)
   }
+  /* Neon effect */
+  .shadow-neon-success {
+    box-shadow:
+      0 0 0 4px var(--color-success),
+      0 0 12px var(--color-success),
+      0 0 24px var(--color-success),
+      0 0 48px var(--color-success)
+  }
   /* classe já “escapada” — Tailwind manterá intacta */
   .hover\:shadow-neon:hover {
     box-shadow:
@@ -79,6 +87,13 @@
       0 0 12px var(--color-primary),
       0 0 24px var(--color-primary),
       0 0 48px var(--color-primary);
+  }
+  .hover\:shadow-neon-success:hover {
+    box-shadow:
+      0 0 0 4px var(--color-success),
+      0 0 12px var(--color-success),
+      0 0 24px var(--color-success),
+      0 0 48px var(--color-success)
   }
 
   .shadow-neon-blur {

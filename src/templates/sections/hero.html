@@ -1,6 +1,5 @@
-<section id="hero-section" class="hero items-start md:items-center relative h-screen bg-primary md:bg-transparent">
-  <!-- Sobreposição escura para realçar texto -->
-  <div class="absolute inset-0 h-full w-full bg-secondary bg-opacity-30"></div>
+<section id="hero-section" class="hero items-start md:items-center relative h-screen md:bg-transparent">
+
 
   <div class="hero-content w-10/12 md:w-full max-w-full relative text-center mt-30 md:mt-0 mx-auto px-4 sm:px-6 lg:px-8 z-10">
     <div class="hidden md:flex w-1/2"></div>
@@ -17,7 +16,9 @@
     </div>
   </div>
   <img src="{{ static('images/hero-bg.png') }}" alt="Imagem de fundo do box Base Inicial"
-    class="absolute inset-0 w-full h-full object-cover opacity-60 z-0" />
+    class="absolute inset-0 w-full h-full object-cover opacity-70 z-0" />
+  <!-- Sobreposição escura para realçar texto -->
+  <div class="absolute h-full w-full bg-linear-to-r from-transparent from-20% via-secondary via-95% to-transparent"></div>
 </section>
 
 

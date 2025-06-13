@@ -38,5 +38,6 @@ export class AppBenefits extends Component {
             const card = new BenefitsCard(cardData).renderBody();
             this.cardsWrapper.addCard(card);
         }
+        return this;
     }
 }
