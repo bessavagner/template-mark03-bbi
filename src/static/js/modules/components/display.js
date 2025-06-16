@@ -2,12 +2,22 @@
 
 import { Component } from "../engine/core.js";
 
+/**
+ * Bullet component for displaying a small colored dot.
+ * extends the base Component class.
+ * @extends Component
+ */
 export class Bullet extends Component {
   constructor() {
     super("span", "h-2 w-2 bg-primary rounded-full mt-1 mr-3 flex-shrink-0");
   }
 }
 
+/**
+ * BulletItem component for displaying a bullet point with text.
+ * extends the base Component class.
+ * @extends Component
+ */
 export class BulletItem extends Component {
   /**
    * @param {string} text
@@ -20,6 +30,11 @@ export class BulletItem extends Component {
   }
 }
 
+/**
+ * BulletList component for managing a list of BulletItem components.
+ * extends the base Component class.
+ * @extends Component
+ */
 export class BulletList extends Component {
   constructor() {
     super("ul");
@@ -59,6 +74,11 @@ export class BulletList extends Component {
   }
 }
 
+/*
+ * Card component for displaying content with a title and body.
+ * extends the base Component class.
+ * @extends Component
+ */
 export class Card extends Component {
   constructor() {
     super("div", "card");
@@ -80,6 +100,12 @@ export class Card extends Component {
   }
 }
 
+
+/**
+ * CardList component for managing a list of Card components.
+ * extends the base Component class.
+ * @extends Component
+ */
 export class CardList extends Component {
   /**
    * Initializes the CardList component.
