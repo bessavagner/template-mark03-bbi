@@ -17,20 +17,14 @@ export class TestimonyCard extends Card {
       "absolute flex-col justify-center w-64 md:w-80 h-[460px] bg-base-300 rounded-xl " +
         "transition-all duration-700 ease-in-out transform-gpu "
     );
-    this.body.addClassList("items-center text-center py-16");
+    this.header.addClassList("avatar flex justify-center pt-6 px-6 mt-8");
+    this.body.addClassList("items-center text-center py-8");
   }
-  renderBody(options = {}) {
-    const { name = "", role = "", quote = "", image = "" } = options;
-
-    const bodyContent = [];
-    const avatarWrapper = new Component(
-      "div",
-      "avatar"
-    );
+  _buildHeader(image, name) {
     const avatar = new Component(
       "div",
       "w-32 rounded-full ring-2 ring-offset-2 ring-primary border-primary shadow-neon ring-offset-base-100 overflow-hidden"
-    ).render({ target: avatarWrapper.element });
+    )
 
     new Component("img")
       .setAttributes({
@@ -39,6 +33,14 @@ export class TestimonyCard extends Card {
         class: "w-full h-full object-cover",
       })
       .render({ target: avatar.element });
+
+    return avatar;
+  }
+  renderBody(options = {}) {
+    const { name = "", role = "", quote = "", image = "" } = options;
+
+    const bodyContent = [];
+    const headerContent = this._buildHeader(image, name);
 
     /* quote */
     const quoteComponent = new Component("p", "italic text-lg roboto-flex-400 mt-10")
@@ -53,7 +55,7 @@ export class TestimonyCard extends Card {
       .setText(name);
 
     /* cargo (opcional) */
-    bodyContent.push(avatarWrapper, quoteComponent, nameComponent);
+    bodyContent.push(quoteComponent, nameComponent);
     this.setState({ name, role, quote, image });
     if (role) {
       const roleComponent = new Component("span", "text-sm opacity-70")
@@ -63,7 +65,7 @@ export class TestimonyCard extends Card {
 
     this.state.active = false;
     this.applyState();
-    return super.renderContent({ body: bodyContent });
+    return super.renderContent({ header: headerContent, body: bodyContent });
 
   }
 
