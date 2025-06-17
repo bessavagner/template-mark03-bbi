@@ -7,7 +7,7 @@ import { CoachesSection } from "./modules/apps/coaches.js";
 
 
 document.addEventListener("DOMContentLoaded", () => {
-    new AppBenefits("#app-cards-bebfits").init();
+    new AppBenefits().init("#app-cards-benefits");
     new AppHowItWorks("#app-steps").init();
     new TestimonyCarousel("#app-testimonials").init();
     new CoachesSection("#app-coaches", "/static/videos/video-institucional-1.mp4");

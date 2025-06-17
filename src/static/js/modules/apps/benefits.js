@@ -36,23 +36,32 @@ export class BenefitsCard extends Card {
 }
 
 export class AppBenefits extends Component {
-  /**
-   * Initializes the AppBenefits component.
-   * @param {string|HTMLElement|Component|Node} target - The target to resolve and where the component will be rendered to.
-   */
-  constructor(target) {
+  constructor() {
     super("div", "mx-auto mt-20");
-    this.render({ target: target });
     const classList =
       "grid grid-cols-1 md:grid-cols-3 justify-items-center gap-4 mt-10 w-11/12 mx-auto";
-    this.cardsWrapper = new Component("div", classList).render({
-      target: this.element,
-    });
+    this.cardsWrapper = new Component("div", classList);
   }
-  init() {
+  /**
+   * Renders a benefits card with the provided data.
+   * @param {Object} options - The data for the benefits card.
+   * @returns {BenefitsCard} - Returns the BenefitsCard instance.
+   */
+  renderCard(options = {}) {
+    const card = new BenefitsCard().renderBody(options);
+    card.render({ target: this.cardsWrapper.element });
+    return card;
+  }
+  /**
+   * Initializes the component and renders the benefits cards.
+   * @param {string|HTMLElement|Component|Node} target - The target to resolve and where the component will be rendered to.
+   * @returns {AppBenefits} - Returns the AppBenefits instance for chaining.
+   */
+  init(target) {
+    this.render({ target: target });
+    this.cardsWrapper.render({ target: this.element });
     for (const data of cardsData) {
-      const card = new BenefitsCard().renderBody(data);
-      card.render({ target: this.cardsWrapper.element });
+      this.renderCard(data);
     }
     return this;
   }
