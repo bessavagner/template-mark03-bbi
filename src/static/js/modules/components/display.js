@@ -1,128 +1,154 @@
 //@ts-check
 
 import { Component } from "../engine/core.js";
+import { normalizeClass } from "../utils.js";
 
 /**
- * Bullet component for displaying a small colored dot.
- * extends the base Component class.
+ * Componente de seção de cartão, usado para estruturar o conteúdo do cartão.
+ * Pode ser usado para o cabeçalho, corpo ou rodapé do cartão.
  * @extends Component
  */
-export class Bullet extends Component {
-  constructor() {
-    super("span", "h-2 w-2 bg-primary rounded-full mt-1 mr-3 flex-shrink-0");
-  }
-}
-
-/**
- * BulletItem component for displaying a bullet point with text.
- * extends the base Component class.
- * @extends Component
- */
-export class BulletItem extends Component {
+export class CardSection extends Component {
   /**
-   * @param {string} text
+   * @param {"header"|"body"|"footer"} type
+   * @param {string|string[]} [classList]
    */
-  constructor(text) {
-    super("li", "flex flex-row items-center");
-    this.bullet = new Bullet().render({ target: this.element });
-    this.text = new Component("span").render({ target: this.element });
-    this.text.setText(text);
+  constructor(type, classList = "") {
+    super("div", `card-${type}`);
+    this.addClassList(normalizeClass(classList));
   }
-}
-
-/**
- * BulletList component for managing a list of BulletItem components.
- * extends the base Component class.
- * @extends Component
- */
-export class BulletList extends Component {
-  constructor() {
-    super("ul");
-    this.items = [];
-  }
-  /**
-   * Adds a bullet item to the list.
-   * @param {string} text - The text for the bullet item.
-   * @returns {BulletList} - Returns the BulletList instance for chaining.
-   */
-  addItem(text) {
-    const item = new BulletItem(text);
-    this.items.push(item);
-    item.render({ target: this.element });
+  renderContent(options = {}) {
+    if (options?.content) {
+      this.setContent(options.content);
+    }
     return this;
   }
-  /**
-   * Adds multiple bullet items to the list.
-   * @param {string[]} items - An array of strings to be added as bullet items.
-   * @returns {BulletList} - Returns the BulletList instance for chaining.
-   */
-  addItems(items) {
-    items.forEach((item) => this.addItem(item));
-    return this;
-  }
-  /**
-   * Changes the bullet color for all items in the list.
-   * @param {string} color - The new color for the bullets, should be a Tailwind CSS class (e.g., "bg-red-500").
-   */
-  changeBulletsColor(color) {
-    if (!color.startsWith("bg-")) {
-      color = `bg-${color}`;
-    }
-    for (const item of this.items) {
-        item.bullet.setClassList(`h-2 w-2 ${color} rounded-full mt-1 mr-3 flex-shrink-0`)
-    }
-  }
 }
 
-/*
- * Card component for displaying content with a title and body.
- * extends the base Component class.
- * @extends Component
- */
 export class Card extends Component {
-  constructor() {
+  constructor(classList = "") {
     super("div", "card");
-    this.cardBody = new Component("div", "card-body");
-    this.cardTitle = new Component("h2", "card-title");
+    this.addClassList(normalizeClass(classList));
+    this.state = {
+      headerContent: null, // Placeholder for header content
+      bodyContent: null, // Placeholder for body content
+      footerContent: null, // Placeholder for footer content
+    };
+    this.header = new CardSection("header");
+    this.body = new CardSection("body");
+    this.footer = new CardSection("footer");
+    this.state = {
+      isHeaderMounted: false,
+      isBodyMounted: false,
+      isFooterMounted: false,
+    };
   }
-  renderBody() {
-    this.cardBody.render({ target: this.element });
+
+  /**
+   * Sets the  content of the card header.
+   *
+   * @param {string|HTMLElement|Component} content - The innerHTML to set, or a HTMLElement or Component.
+   * @returns {Card} This Component instance for chaining.
+   */
+  setHeaderContent(content) {
+    this.header.setContent(content);
+    return this;
+  }
+
+  /**
+   * Sets the  content of the card body.
+   *
+   * @param {string|HTMLElement|Component} content - The innerHTML to set, or a HTMLElement or Component.
+   * @returns {Card} This Component instance for chaining.
+   */
+  setBodyContent(content) {
+    this.body.setContent(content);
     return this;
   }
   /**
-   * Renders the card with a title.
-   * @param {string} title - The title to be displayed on the card.
+   * Adds a component to the card body.
+   *
+   * @param {Component} component - The Component instance to add to the card body.
    */
-  renderTitle(title) {
-    this.cardTitle.setText(title);
-    this.cardTitle.render({ target: this.cardBody.element });
+  addBodyComponent(component) {
+    this.body.addComponent(component);
+  }
+
+  /**
+   * Sets the  content of the card footer.
+   *
+   * @param {string|HTMLElement|Component} content - The innerHTML to set, or a HTMLElement or Component.
+   * @returns {Card} This Component instance for chaining.
+   */
+  setFooterContent(content) {
+    this.footer.setContent(content);
     return this;
   }
-}
-
-
-/**
- * CardList component for managing a list of Card components.
- * extends the base Component class.
- * @extends Component
- */
-export class CardList extends Component {
-  /**
-   * Initializes the CardList component.
-   * @param {string} classList - The CSS class list for the card list container.
-   */
-  constructor(classList) {
-    super("div", classList);
-    this.cards = [];
-  }
-  /**
-   *  Adds a card to the card list.
-   * @param {Card} card - The card instance to be added.
-   * @returns {CardList} - Returns the CardList instance for chaining.
-   */
-  addCard(card) {
-    this.cards.push(card);
-    card.render({ target: this.element });
+  renderContent(options = {}) {
+    console.debug("Card.renderContent", options);
+    if (options?.header) {
+      if (this.header.isMounted()) {
+        this.header.update({ content: options.header });
+      } else {
+        if (options.header instanceof Array) {
+          options.header.forEach((item) => {
+            if (item instanceof Component) {
+              this.header.addComponent(item);
+            } else {
+              this.header.setContent(item);
+            }
+          });
+        } else if (options.header instanceof Component) {
+          this.header.addComponent(options.header);
+        } else {
+          this.setHeaderContent(options.header);
+        }
+        this.header.render({ target: this.element });
+        this.setState({ isHeaderMounted: this.header.isMounted() });
+      }
+    }
+    if (options?.body) {
+      if (this.body.isMounted()) {
+        this.body.update({ content: options.body });
+      } else {
+        if (options.body instanceof Array) {
+          options.body.forEach((item) => {
+            if (item instanceof Component) {
+              this.addBodyComponent(item);
+            } else {
+              this.body.setContent(item);
+            }
+          });
+        } else if (options.body instanceof Component) {
+          this.addBodyComponent(options.body);
+        } else {
+          this.setBodyContent(options.body);
+        }
+        this.body.render({ target: this.element });
+        this.setState({ isBodyMounted: this.body.isMounted() });
+      }
+    }
+    if (options?.footer) {
+      if (this.footer.isMounted()) {
+        this.footer.update({ content: options.footer });
+      } else {
+        if (options.footer instanceof Array) {
+          options.footer.forEach((item) => {
+            if (item instanceof Component) {
+              this.footer.addComponent(item);
+            } else {
+              this.footer.setContent(item);
+            }
+          });
+        } else if (options.footer instanceof Component) {
+          this.footer.addComponent(options.footer);
+        } else {
+          this.setFooterContent(options.footer);
+        }
+        this.footer.render({ target: this.element });
+        this.setState({ isFooterMounted: this.footer.isMounted() });
+      }
+    }
     return this;
   }
 }

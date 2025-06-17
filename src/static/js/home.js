@@ -1,12 +1,15 @@
 //@ts-check
 
-import { AppBenefits } from "./modules/apps/benefits.js?version=3";
-import { AppHowItWorks } from "./modules/apps/how.js?version=2";
-import { TestimonyCarousel } from "./modules/apps/testimony.js?version=2";
+import { AppBenefits } from "./modules/apps/benefits.js";
+import { AppHowItWorks } from "./modules/apps/how.js";
+import { TestimonyCarousel } from "./modules/apps/testimony.js";
+import { CoachesSection } from "./modules/apps/coaches.js";
+
 
 document.addEventListener("DOMContentLoaded", () => {
     new AppBenefits("#app-cards-bebfits").init();
     new AppHowItWorks("#app-steps").init();
     new TestimonyCarousel("#app-testimonials").init();
+    new CoachesSection("#app-coaches", "/static/videos/video-institucional-1.mp4");
 });
 

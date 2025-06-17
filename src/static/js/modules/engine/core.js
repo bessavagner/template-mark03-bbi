@@ -1,3 +1,4 @@
+// static/js/modules/engine/core.js
 //@ts-check
 
 import { DOMUtil, RenderEngine } from "./DOM.js";
@@ -283,7 +284,19 @@ export class Component {
     }
     return this;
   }
-
+  /**
+   * Adds a component to the component's element.
+   * @param {Component} component - The component to add.
+   * @param {RenderOptions} [options={}] - Options for rendering the component.
+   * @throws {TypeError} If the component is not an instance of Component class.
+   */
+  addComponent(component, options = {}) {
+    if (!(component instanceof Component)) {
+      throw new TypeError("Component must be an instance of Component class.");
+    }
+    options.target = this.element;
+    component.render(options);
+  }
   /**
    * Renders the component into another element.
    * @param {RenderOptions} options - Options for rendering the component.
@@ -314,6 +327,9 @@ export class Component {
     this.afterMount();
 
     return this;
+  }
+  isMounted() {
+    return this._isMounted;
   }
 
   /**

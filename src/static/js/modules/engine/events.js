@@ -1,3 +1,4 @@
+// static/js/modules/engine/events.js
 // @ts-check
 
 import { Component } from "./core.js";

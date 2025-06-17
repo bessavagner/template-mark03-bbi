@@ -1,8 +1,8 @@
 // /js/modules/how.js
 //@ts-check
 import { Component } from "../engine/core.js";
-import { BulletList } from "../components/display.js";
-import { stepsData } from "./howData.js";
+import { BulletList } from "../components/bullets.js";
+import { stepsData } from "./data/howData.js";
 
 /* ───────── CircleOverLight ─ circle icon ────────────────────── */
 class CircleOverLight extends Component {

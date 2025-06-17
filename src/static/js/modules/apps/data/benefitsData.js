@@ -1,4 +1,4 @@
-import { dumbell, coaches, plot } from "../svg.js"
+import { dumbell, coaches, plot } from "../../svg.js"
 
 export const cardsData = [
     {

@@ -2,6 +2,7 @@
 @source "../js/*.js";
 @source "../js/modules/*.js";
 @source "../js/modules/apps/*.js";
+@source "../js/modules/apps/data/*.js";
 @source "../js/modules/components/*.js";
 @source "../js/modules/engine/*.js";
 @source "./input.css";

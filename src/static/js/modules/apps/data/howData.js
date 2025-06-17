@@ -1,5 +1,5 @@
 // /js/modules/howData.js
-import { calendar, coach, custom } from "../svg.js";
+import { calendar, coach, custom } from "../../svg.js";
 
 export const stepsData = [
   {

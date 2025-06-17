@@ -1,8 +1,8 @@
 // /static/js/modules/testimonyCard.js
 //@ts-check
 import { Component } from "../engine/core.js";
-import { Card, CardList } from "../components/display.js";
-import { testimonyData } from "./testimonyData.js";
+import { Card } from "../components/display.js";
+import { testimonyData } from "./data/testimonyData.js";
 /**
  * Card 3-D para depoimentos.
  *  - foto redonda
@@ -12,30 +12,21 @@ import { testimonyData } from "./testimonyData.js";
  *  @extends Card
  */
 export class TestimonyCard extends Card {
-  /**
-   * @param {{name:string, role?:string, quote:string, image:string}} opts
-   */
-  constructor(opts) {
-    super();
-
-    const { name = "", role = "", quote = "", image = "" } = opts;
-
-    /* ---------- classe base ---------- */
-    this.addClassList(
+  constructor() {
+    super(
       "absolute flex-col justify-center w-64 md:w-80 h-[460px] bg-base-300 rounded-xl " +
         "transition-all duration-700 ease-in-out transform-gpu "
-    ); //  scale/blur alterados pelo estado
-
-    /* ---------- body ---------- */
-    this.cardBody.addClassList(
-      "items-center text-center py-16"
     );
+    this.body.addClassList("items-center text-center py-16");
+  }
+  renderBody(options = {}) {
+    const { name = "", role = "", quote = "", image = "" } = options;
 
-    /* foto */
+    const bodyContent = [];
     const avatarWrapper = new Component(
       "div",
       "avatar"
-    ).render({ target: this.cardBody.element });
+    );
     const avatar = new Component(
       "div",
       "w-32 rounded-full ring-2 ring-offset-2 ring-primary border-primary shadow-neon ring-offset-base-100 overflow-hidden"
@@ -50,28 +41,30 @@ export class TestimonyCard extends Card {
       .render({ target: avatar.element });
 
     /* quote */
-    new Component("p", "italic text-lg roboto-flex-400 mt-10")
+    const quoteComponent = new Component("p", "italic text-lg roboto-flex-400 mt-10")
       .setText(`“${quote}”`)
-      .render({ target: this.cardBody.element });
+      .render({ target: this.body.element });
 
     /* nome */
-    new Component(
+    const nameComponent = new Component(
       "h3",
       "font-heading barlow-condensed-semibold text-xl text-primary"
     )
-      .setText(name)
-      .render({ target: this.cardBody.element });
+      .setText(name);
 
     /* cargo (opcional) */
+    bodyContent.push(avatarWrapper, quoteComponent, nameComponent);
+    this.setState({ name, role, quote, image });
     if (role) {
-      new Component("span", "text-sm opacity-70")
-        .setText(role)
-        .render({ target: this.cardBody.element });
+      const roleComponent = new Component("span", "text-sm opacity-70")
+        .setText(role);
+      bodyContent.push(roleComponent);
     }
 
-    /* ---------- estado visual ---------- */
-    this.state = { active: false };
+    this.state.active = false;
     this.applyState();
+    return super.renderContent({ body: bodyContent });
+
   }
 
   /** Aplica classes conforme active / inactive */
@@ -96,18 +89,15 @@ export class TestimonyCard extends Card {
 }
 
 /**
- * Carrossel 3-D de depoimentos.
- *  • Mostra 3 cards visíveis; central = ativo (sem blur/escala).
- *  • Auto-rotate a cada X segundos.
- *  • Métodos next/prev para controle externo.
+ * Carrossel 3D de depoimentos
  */
-export class TestimonyCarousel extends CardList {
+export class TestimonyCarousel extends Component {
   /**
-   * @param {string|HTMLElement|import("../engine/core.js").Component|Node} target
-   * @param {{interval?:number}} [opts]
+   * @param {string|HTMLElement|Component|Node} target
+   * @param {{ interval?: number }} [opts]
    */
   constructor(target, opts = {}) {
-    super("relative grid grid-cols-3 gap-8 items-center h-[440px]"); // altura fixa ajustável
+    super("div", "relative grid grid-cols-3 gap-8 items-center h-[440px]");
     this.render({ target });
 
     /** @type {TestimonyCard[]} */
@@ -115,10 +105,10 @@ export class TestimonyCarousel extends CardList {
     this.currentIndex = 0;
     this.interval = opts.interval ?? 5000;
 
-    // Criar todos os cards e armazenar
     testimonyData.forEach((data) => {
-      const card = new TestimonyCard(data).renderBody();
-      this.addCard(card);
+      const card = new TestimonyCard().renderBody(data);
+      this.cards.push(card);
+      this.element.appendChild(card.element);
 
       card.setStyle({ left: "50%", transform: "translateX(-50%)" });
     });
@@ -137,8 +127,7 @@ export class TestimonyCarousel extends CardList {
   }
 
   prev() {
-    this.currentIndex =
-      (this.currentIndex - 1 + this.cards.length) % this.cards.length;
+    this.currentIndex = (this.currentIndex - 1 + this.cards.length) % this.cards.length;
     this.updateVisuals();
   }
 
@@ -146,7 +135,7 @@ export class TestimonyCarousel extends CardList {
     const len = this.cards.length;
 
     this.cards.forEach((card, idx) => {
-      card.setActive(false); // reset
+      card.setActive(false);
       card.setStyle({
         display: "none",
         transform: "translateX(-50%)",
@@ -159,7 +148,6 @@ export class TestimonyCarousel extends CardList {
     const left = (center - 1 + len) % len;
     const right = (center + 1) % len;
 
-    // CENTER
     this.cards[center].setActive(true);
     this.cards[center].setStyle({
       display: "flex",
@@ -168,7 +156,6 @@ export class TestimonyCarousel extends CardList {
       opacity: "1",
     });
 
-    // LEFT
     this.cards[left].setStyle({
       display: "flex",
       transform: "translateX(-160%) scale(0.85)",
@@ -176,7 +163,6 @@ export class TestimonyCarousel extends CardList {
       opacity: "0.5",
     });
 
-    // RIGHT
     this.cards[right].setStyle({
       display: "flex",
       transform: "translateX(50%) scale(0.85)",
