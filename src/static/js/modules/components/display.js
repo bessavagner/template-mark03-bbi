@@ -14,8 +14,20 @@ export class CardSection extends Component {
    * @param {string|string[]} [classList]
    */
   constructor(type, classList = "") {
+    let className = "";
+    // Para que tailwind compile a classe:
+    if (type === "header") {
+      className = "card-header";
+    } else if (type === "body") {
+      className = "card-body";
+    } else if (type === "footer") {
+      className = "card-footer";
+    } else {
+      console.warn(`CardSection: Invalid type "${type}". Defaulting to "body".`);
+      className = "card-body";
+    }
     super("div", `card-${type}`);
-    this.addClassList(normalizeClass(classList));
+    this.addClassList(normalizeClass(className));
   }
   renderContent(options = {}) {
     if (options?.content) {

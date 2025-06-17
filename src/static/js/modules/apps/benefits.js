@@ -9,29 +9,37 @@ import { cardsData } from "./data/benefitsData.js";
 export class BenefitsCard extends Card {
   constructor() {
     super(
-      "w-96 md:h-[500px] bg-base-300 rounded-lg transition-all duration-300 hover:shadow-neon hover:scale-105"
+      "w-96 md:h-[460px] bg-base-300 rounded-xl transition-all duration-300 hover:shadow-neon hover:scale-105"
     );
     this.body.addClassList("max-w-full justify-center m-auto");
+    this.header.addClassList("flex justify-center pt-6 px-6");
   }
-  renderBody(options = {}) {
+  renderContent(options = {}) {
     const { title = "", descriptions = [], svg = "" } = options;
-    this.setState({ title, descriptions, svg });
-    const svgWrapper = new Component(
-      "div",
-      "flex flex-col items-center mb-4"
-    ).setContent(this.state.svg);
-    const titleComponent = new Component(
+    this.setState(options);
+
+    return super.renderContent({
+      header: svg,
+      body: this._buildBodyContent(title, descriptions),
+    });
+  }
+  /**
+   * Builds the body content for the benefits card.
+   * @param {string} title - The title of the card.
+   * @param {string[]} descriptions - An array of description strings.
+   * @returns {Component[]} - Returns an array of components to be rendered in the body.
+   */
+  _buildBodyContent(title, descriptions) {
+    const titleEl = new Component(
       "h3",
-      "mt-4 text-center text-xl md:text-4xl font-heading barlow-condensed-regular px-2"
-    ).setText(this.state.title);
+      "text-center text-xl md:text-2xl font-heading barlow-condensed-regular px-2"
+    ).setText(title);
+
     const list = new BulletList();
     list.setClassList("space-y-2 text-lg md:text-xl mt-4 roboto-flex-400");
-    for (const desc of this.state.descriptions) {
-      list.addItem(desc);
-    }
-    return super.renderContent({
-      body: [svgWrapper, titleComponent, list],
-    });
+    for (const desc of descriptions) list.addItem(desc);
+
+    return [titleEl, list];
   }
 }
 
@@ -48,7 +56,7 @@ export class AppBenefits extends Component {
    * @returns {BenefitsCard} - Returns the BenefitsCard instance.
    */
   renderCard(options = {}) {
-    const card = new BenefitsCard().renderBody(options);
+    const card = new BenefitsCard().renderContent(options);
     card.render({ target: this.cardsWrapper.element });
     return card;
   }
@@ -60,9 +68,7 @@ export class AppBenefits extends Component {
   init(target) {
     this.render({ target: target });
     this.cardsWrapper.render({ target: this.element });
-    for (const data of cardsData) {
-      this.renderCard(data);
-    }
+    for (const data of cardsData) this.renderCard(data);
     return this;
   }
 }

@@ -4,7 +4,7 @@ export const cardsData = [
     {
         title: "Treinos intensos e variados",
         descriptions: [
-            "Variedade constante de movimentos",
+            "Variações de movimentos",
             "Intensidade elevada",
             "Desafios renovados",
         ],
