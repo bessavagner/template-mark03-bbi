@@ -20,37 +20,18 @@ export class TestimonyCard extends Card {
     this.header.addClassList("avatar flex justify-center pt-6 px-6 mt-8");
     this.body.addClassList("items-center text-center py-8");
   }
-  renderBody(options = {}) {
+  renderContent(options = {}) {
     const { name = "", role = "", quote = "", image = "" } = options;
 
-    const bodyContent = [];
+    const bodyContent = this._buildBodyContent(options);
     const headerContent = this._buildHeader(image, name);
 
-    /* quote */
-    const quoteComponent = new Component("p", "italic text-lg roboto-flex-400 mt-10")
-      .setText(`“${quote}”`)
-      .render({ target: this.body.element });
-
-    /* nome */
-    const nameComponent = new Component(
-      "h3",
-      "font-heading barlow-condensed-semibold text-xl text-primary"
-    )
-      .setText(name);
-
-    /* cargo (opcional) */
-    bodyContent.push(quoteComponent, nameComponent);
-    this.setState({ name, role, quote, image });
-    if (role) {
-      const roleComponent = new Component("span", "text-sm opacity-70")
-        .setText(role);
-      bodyContent.push(roleComponent);
-    }
-
     this.state.active = false;
+    this.setState({ name, role, quote, image });
     this.applyState();
+   
     return super.renderContent({ header: headerContent, body: bodyContent });
-
+  
   }
   /** Aplica classes conforme active / inactive */
   applyState() {
@@ -86,6 +67,32 @@ export class TestimonyCard extends Card {
 
     return avatar;
   }
+  _buildBodyContent(options = {}) {
+    const { name = "", role = "", quote = "", image = "" } = options;
+    
+    const bodyContent = [];
+
+    const quoteComponent = new Component("p", "italic text-lg roboto-flex-400 mt-10")
+      .setText(`“${quote}”`)
+      .render({ target: this.body.element });
+
+    const nameComponent = new Component(
+      "h3",
+      "font-heading barlow-condensed-semibold text-xl text-primary"
+    )
+      .setText(name);
+
+      bodyContent.push(quoteComponent, nameComponent);
+
+      
+      if (role) {
+        const roleComponent = new Component("span", "text-sm opacity-70")
+        .setText(role);
+        bodyContent.push(roleComponent);
+      }
+
+      return  bodyContent;
+  }
 }
 
 /**
@@ -106,7 +113,7 @@ export class TestimonyCarousel extends Component {
     this.interval = opts.interval ?? 5000;
 
     testimonyData.forEach((data) => {
-      const card = new TestimonyCard().renderBody(data);
+      const card = new TestimonyCard().renderContent(data);
       this.cards.push(card);
       this.element.appendChild(card.element);
 

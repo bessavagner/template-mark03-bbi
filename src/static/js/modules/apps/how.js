@@ -26,12 +26,12 @@ export class HowStepCard extends Card {
     this.setState(options);
 
     return super.renderContent({
-      header: this._renderCircleIcon(svg),
-      body: this._renderBody(title, bullets),
+      header: this._buildCircleIcon(svg),
+      body: this._buildBodyContent(title, bullets),
     });
   }
 
-  _renderCircleIcon(svg) {
+  _buildCircleIcon(svg) {
     const circle = new Component("div",
       "bg-base-300 w-30 h-30 md:w-40 md:h-40 rounded-full " +
       "flex items-center justify-center text-primary shadow-neon"
@@ -40,7 +40,7 @@ export class HowStepCard extends Card {
     return circle;
   }
 
-  _renderBody(title, bullets) {
+  _buildBodyContent(title, bullets) {
     const titleEl = new Component(
       "h3",
       "font-heading barlow-condensed-semibold text-3xl"
