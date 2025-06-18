@@ -1,11 +1,67 @@
 // @ts-check
 import { Component } from "../engine/core.js";
+import { Card } from "../components/display.js";
 import { coachesData } from "./data/coachesData.js";
 
+export class CoachCard extends Card {
+  constructor() {
+    super("card w-72 bg-base-300 rounded-lg shadow-md " +
+      "transition-transform duration-300 hover:shadow-neon hover:scale-110"
+    );
+    this.body.addClassList("card-body flex flex-col items-center text-center p-6 space-y-4");
+  }
+  renderContent(options = {}) {
+    const { name = "", title = "", image = "", credentials = [] } = options;
+    this.setState({ name, title, image, credentials });
+
+    const bodyContent = this._buildBodyContent({
+      name, title, image, credentials
+    });
+
+    return super.renderContent({ body: bodyContent });
+  }
+  _buildBodyContent({ name, title, image, credentials }) {
+    // avatar
+    const avatarWrapper = new Component("div",
+      "w-32 h-32 rounded-full overflow-hidden ring-2 ring-primary " +
+      "ring-offset-base-100 shadow-neon"
+    ).append(
+      new Component("img")
+        .setAttributes({
+          src: image,
+          alt: `Foto de ${name}`,
+          class: "w-full h-full object-cover"
+        }).element
+    );
+
+    // nome
+    const nameComponent = new Component("h3",
+      "text-xl font-heading barlow-condensed-semibold text-primary"
+    )
+      .setText(name);
+
+    // cargo
+    const titleComponent = new Component("span", "text-sm opacity-70")
+      .setText(title);
+
+    const content = [avatarWrapper, nameComponent, titleComponent];
+
+    // credenciais
+    if (credentials && credentials.length) {
+      const ul = new Component("ul", "mt-2 text-xs list-disc list-inside space-y-1").render({ target: this.body.element });
+      credentials.forEach(cred =>
+        new Component("li").setText(cred).render({ target: ul.element })
+      );
+      content.push(ul);
+    }
+    return content; 
+  }
+
+}
 /**
  * Card individual de coach: foto, nome, cargo e credenciais.
  */
-export class CoachCard extends Component {
+export class CoachCard2 extends Component {
   /**
    * @param {{name:string, title:string, image:string, credentials:string[]}} opts
    */
@@ -95,7 +151,7 @@ export class CoachesSection extends Component {
     ).render({ target: grid.element });
 
     coachesData.forEach(coach =>
-      new CoachCard(coach).render({ target: cardsWrapper.element })
+      new CoachCard().renderContent(coach).render({ target: cardsWrapper.element })
     );
   }
 }

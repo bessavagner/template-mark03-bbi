@@ -20,22 +20,6 @@ export class TestimonyCard extends Card {
     this.header.addClassList("avatar flex justify-center pt-6 px-6 mt-8");
     this.body.addClassList("items-center text-center py-8");
   }
-  _buildHeader(image, name) {
-    const avatar = new Component(
-      "div",
-      "w-32 rounded-full ring-2 ring-offset-2 ring-primary border-primary shadow-neon ring-offset-base-100 overflow-hidden"
-    )
-
-    new Component("img")
-      .setAttributes({
-        src: image,
-        alt: `Foto de ${name}`,
-        class: "w-full h-full object-cover",
-      })
-      .render({ target: avatar.element });
-
-    return avatar;
-  }
   renderBody(options = {}) {
     const { name = "", role = "", quote = "", image = "" } = options;
 
@@ -68,7 +52,6 @@ export class TestimonyCard extends Card {
     return super.renderContent({ header: headerContent, body: bodyContent });
 
   }
-
   /** Aplica classes conforme active / inactive */
   applyState() {
     if (this.state.active) {
@@ -79,7 +62,6 @@ export class TestimonyCard extends Card {
       this.removeClassList(["scale-100", "z-20", "opacity-100"]);
     }
   }
-
   /**
    * Define se o card está no foco do carrossel.
    * @param {boolean} isActive
@@ -87,6 +69,22 @@ export class TestimonyCard extends Card {
   setActive(isActive) {
     this.setState({ active: isActive });
     this.applyState();
+  }
+  _buildHeader(image, name) {
+    const avatar = new Component(
+      "div",
+      "w-32 rounded-full ring-2 ring-offset-2 ring-primary border-primary shadow-neon ring-offset-base-100 overflow-hidden"
+    )
+
+    new Component("img")
+      .setAttributes({
+        src: image,
+        alt: `Foto de ${name}`,
+        class: "w-full h-full object-cover",
+      })
+      .render({ target: avatar.element });
+
+    return avatar;
   }
 }
 
