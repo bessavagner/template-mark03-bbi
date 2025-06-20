@@ -97,7 +97,6 @@ export class Card extends Component {
     return this;
   }
   renderContent(options = {}) {
-    console.debug("Card.renderContent", options);
     if (options?.header) {
       if (this.header.isMounted()) {
         this.header.update({ content: options.header });

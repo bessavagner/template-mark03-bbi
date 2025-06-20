@@ -122,7 +122,12 @@ export class Component {
     this.element.classList.add(classItem);
     return this;
   }
-
+  /**
+   * Adds one or more classes to the component's element.
+   *
+   * @param {string|Array<string>} classList - The class name(s) to add. If a string, it is split by whitespace.
+   * @returns {Component} This Component instance for chaining.
+   */
   addClassList(classList) {
     if (Array.isArray(classList)) {
       classList.forEach((classItem) => this.addClass(classItem));
