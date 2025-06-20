@@ -37,10 +37,15 @@ export const scheduleFormElements = [
         renderOptions: {
             type: 'text',
             name: 'nomeSobrenome',
-            placeholder: 'Nome e Sobrenome',
             required: true,
+            label: {
+                text: 'Nome e Sobrenome',
+                for: 'nomeSobrenome',
+            },
         },
         options: {
-            classList: 'input',
+            classList: 'flex flex-col w-full',
+            inputClassList: 'input w-full',
+            labelClassList: 'label ml-2',
         },
     },]

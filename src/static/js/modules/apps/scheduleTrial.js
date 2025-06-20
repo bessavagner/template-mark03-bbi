@@ -5,13 +5,13 @@ import { scheduleFormElements } from "../components/constants.js";
 
 class ScheduleForm extends Form {
     constructor(classList = null) {
-        super( classList || "bg-base-300 shadow-lg rounded-lg p-6");
+        super( classList || "flex flex-col items-center w-full bg-base-300 shadow-lg rounded-lg p-6");
     }
 }
 
 export class ScheduleFormApp extends Component {
     constructor() {
-        super("div", "container mx-auto px-4 py-8 w-10/12 h-full");
+        super("div", "flex flex-col items-center container mx-auto px-4 py-8 w-11/12 md:w-1/2 h-full");
         this.form = new ScheduleForm();
     }
     renderContent(options = {}) {
