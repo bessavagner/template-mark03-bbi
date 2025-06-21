@@ -34,5 +34,6 @@ export class ScheduleFormApp extends Component {
             method: "POST",
             target: "_self",
         });
+        console.log(this.form.getFormData());
     }
 }

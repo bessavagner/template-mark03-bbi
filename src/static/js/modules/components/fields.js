@@ -471,13 +471,18 @@ export class LabeledSelect extends LabeledField {
   }
 }
 
-export class FieldContainer extends Component {
+export class FieldsContainer extends Component {
   /**
-   * @param {string|string[]|null} classList - Lista de classes CSS para o container.
+   * @param {Object} options - Opções para configurar o FieldsContainer.
+   * @param {string} [options.tagName="div"] - O nome da tag HTML do container.
+   * @param {string|string[]|null} [options.classList=null] - Lista de classes CSS para o container.
    */
-  constructor(tag = "div", classList = null) {
-    super(tag, classList);
-    /** @type {(Button | Input | Select | LabeledInput | LabeledSelect )[]} */
+  constructor(options = {}) {
+    const tagName = options.tagName || "div";
+    const classList = options.classList || null;
+    super(tagName, classList);
+
+    /** @type {(FieldsContainer | Input | Select | LabeledInput | LabeledSelect | Button)[]} */
     this.fields = [];
     this.state = {
       hasField: this._hasField(),
@@ -497,17 +502,26 @@ export class FieldContainer extends Component {
       this.setAttribute("target", options.target);
     }
     if (options?.fields) {
+      if (!Array.isArray(options?.fields)) {
+        console.warn("FieldsContainer: 'fields' precisa ser array.");
+        return this;
+      }
       options.fields.forEach((field) => {
         if (
           !field.tagName ||
           !formElementsTag.includes(field.tagName.toLowerCase())
         ) {
-          console.warn(
-            "Form: Unsupported field type. Only form elements are allowed."
-          );
-          return;
-        }
-        if (field.tagName.toLowerCase() === "input") {
+          if (field.FieldsContainer) {
+            this.renderFieldsContainer(
+              field.FieldsContainer.options || {},
+              field.FieldsContainer.renderOptions || {}
+            );
+          } else {
+            console.warn(
+              "Form: Unsupported field type. Only form elements are allowed."
+            );
+          }
+        } else if (field.tagName.toLowerCase() === "input") {
           this.renderInput(field.options || {}, field.renderOptions || {});
         } else if (field.tagName.toLowerCase() === "select") {
           this.renderSelect(field.options || {}, field.renderOptions || {});
@@ -516,6 +530,7 @@ export class FieldContainer extends Component {
         }
       });
     }
+    return this;
   }
   renderInput(options = {}, renderOptions = {}) {
     this.addField(
@@ -533,6 +548,24 @@ export class FieldContainer extends Component {
         target: this.element,
       })
     );
+    this.setState({
+      hasField: this._hasField(),
+    });
+  }
+  renderFieldsContainer(options = {}, renderOptions = {}) {
+    const container = this._buildFieldsContainerContent(
+      options,
+      renderOptions
+    ).render({
+      target: this.element,
+    });
+    container.fields.forEach((field) => {
+      this.fields.push(field);
+      if (field.getAttribute("type") === "submit") {
+        this.state.hasSubmitButton = true;
+        this.submitButton = field;
+      }
+    });
     this.setState({
       hasField: this._hasField(),
     });
@@ -647,6 +680,9 @@ export class FieldContainer extends Component {
   }
   _buildSelectContent(options = {}, renderOptions = {}) {
     return new LabeledSelect(options).renderContent(renderOptions);
+  }
+  _buildFieldsContainerContent(options = {}, renderOptions = {}) {
+    return new FieldsContainer(options).renderContent(renderOptions);
   }
   _buildButtonContent(options = {}, renderOptions = {}) {
     return new Button(options).renderContent(renderOptions);

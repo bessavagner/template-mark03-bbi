@@ -1,13 +1,13 @@
 // @ts-check
 
 import { Button } from "./actions.js";
-import { Input, LabeledInput, LabeledSelect, FieldContainer } from "./fields.js";
+import { Input, Select, LabeledInput, LabeledSelect, FieldsContainer } from "./fields.js";
 
 
-export class Form extends FieldContainer {
+export class Form extends FieldsContainer {
   constructor(classList = null) {
-    super("form", classList);
-    /** @type {(Input | LabeledInput | LabeledSelect | Button)[]} */
+    super({tagName: "form", classList: classList});
+    /** @type {(FieldsContainer | Input | Select | LabeledInput | LabeledSelect | Button)[]} */
     this.fields = [];
     this.submitButton = new Button({classList: null});
     this.setState({
@@ -15,7 +15,7 @@ export class Form extends FieldContainer {
     });
   }
   renderContent(options = {}) {
-    super.renderContent(options);
+    return super.renderContent(options);
   }
   init() {
     if (!this._hasField()) {
