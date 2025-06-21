@@ -80,7 +80,75 @@ export class Options extends FormElementComponent {
   }
 }
 
-export class Input extends FormElementComponent {
+export class ValueField extends FormElementComponent {
+  /**
+   * @param {string} tagName - O nome da tag HTML do elemento de formulário (input, select, textarea etc.).
+   * @param {string|string[]|null} [classList=null] - Lista de classes CSS para o elemento.
+   */
+  constructor(tagName, classList = null) {
+    super(tagName, classList);
+    this.state = {
+      value: null, // Valor atual do campo
+      isDisabled: false, // Estado de desabilitado do campo
+    };
+  }
+  /**
+   * Gets the current value of the input.
+   * @returns {string | null} The input value.
+   */
+  getValue() {
+    this.refresh();
+    return this.getAttribute("value");
+  }
+  /**
+   * Sets the value of the input.
+   * @param {string} value - The new input value.
+   * @returns {ValueField} This Input instance for chaining.
+   */
+  setValue(value) {
+    this.setAttribute("value", value);
+    return this;
+  }
+  /**
+   * Disables the input.
+   * @returns {ValueField} This Input instance for chaining.
+   */
+  disable() {
+    this.setAttribute("disabled", "disabled");
+    return this;
+  }
+  /**
+   * Enables the input.
+   * @returns {ValueField} This Input instance for chaining.
+   */
+  enable() {
+    this.element.removeAttribute("disabled");
+    return this;
+  }
+  toggleEnable() {
+    if (this.element.hasAttribute("disabled")) {
+      this.enable();
+    } else {
+      this.disable();
+    }
+  }
+  refresh() {
+    const id = this.element.id;
+    if (id !== null && id !== "") {
+      const element = document.getElementById(id);
+      if (element) {
+        this.setValue(element instanceof HTMLInputElement ? element.value : "");
+        return this;
+      }
+      throw new Error(
+        `Input element with id '${id}' not found in the document.`
+      );
+    }
+    throw new Error("Input element not found or has no id");
+  }
+}
+
+export class Input extends ValueField {
   /**
    * @param {string|string[]|null} classList - Lista de classes CSS para o elemento.
    */
@@ -117,63 +185,9 @@ export class Input extends FormElementComponent {
     );
     return this;
   }
-  /**
-   * Gets the current value of the input.
-   * @returns {string | null} The input value.
-   */
-  getValue() {
-    this.refresh();
-    return this.getAttribute("value");
-  }
-  /**
-   * Sets the value of the input.
-   * @param {string} value - The new input value.
-   * @returns {Input} This Input instance for chaining.
-   */
-  setValue(value) {
-    this.setAttribute("value", value);
-    return this;
-  }
-  /**
-   * Disables the input.
-   * @returns {Input} This Input instance for chaining.
-   */
-  disable() {
-    this.setAttribute("disabled", "disabled");
-    return this;
-  }
-  /**
-   * Enables the input.
-   * @returns {Input} This Input instance for chaining.
-   */
-  enable() {
-    this.element.removeAttribute("disabled");
-    return this;
-  }
-  toggleEnable() {
-    if (this.element.hasAttribute("disabled")) {
-      this.enable();
-    } else {
-      this.disable();
-    }
-  }
-  refresh() {
-    const id = this.element.id;
-    if (id !== null && id !== "") {
-      const element = document.getElementById(id);
-      if (element) {
-        this.setValue(element instanceof HTMLInputElement ? element.value : "");
-        return this;
-      }
-      throw new Error(
-        `Input element with id '${id}' not found in the document.`
-      );
-    }
-    throw new Error("Input element not found or has no id");
-  }
 }
 
-export class Select extends FormElementComponent {
+export class Select extends ValueField {
   /**
    * @param {string|string[]|null} classList - Lista de classes CSS para o elemento.
    */
@@ -229,70 +243,6 @@ export class Select extends FormElementComponent {
       );
     }
     return this;
-  }
-  /**
-   * Gets the current value of the select.
-   * @returns {string | null} The selected value.
-   */
-  getValue() {
-    this.refresh();
-    return this.getAttribute("value");
-  }
-  /**
-   * Sets the value of the select.
-   * @param {string} value - The new selected value.
-   * @returns {Select} This Select instance for chaining.
-   */
-  setValue(value) {
-    this.setAttribute("value", value);
-    const options = this.element.querySelectorAll("option");
-    options.forEach((option) => {
-      if (option.value === value) {
-        option.selected = true;
-      } else {
-        option.selected = false;
-      }
-    });
-    return this;
-  }
-  /**
-   * Disables the select.
-   * @returns {Select} This Select instance for chaining.
-   */
-  disable() {
-    this.setAttribute("disabled", "disabled");
-    return this;
-  }
-  /**
-   * Enables the select.
-   * @returns {Select} This Select instance for chaining.
-   */
-  enable() {
-    this.element.removeAttribute("disabled");
-    return this;
-  }
-  toggleEnable() {
-    if (this.element.hasAttribute("disabled")) {
-      this.enable();
-    } else {
-      this.disable();
-    }
-  }
-  refresh() {
-    const id = this.element.id;
-    if (id !== null && id !== "") {
-      const element = document.getElementById(id);
-      if (element) {
-        this.setValue(
-          element instanceof HTMLSelectElement ? element.value : ""
-        );
-        return this;
-      }
-      throw new Error(
-        `Select element with id '${id}' not found in the document.`
-      );
-    }
-    throw new Error("Select element not found or has no id");
   }
 }
 
@@ -388,6 +338,12 @@ export class LabeledInput extends LabeledField {
   renderInputContent(options = {}) {
     this.input.renderContent(this._buildInputContent(options));
   }
+  getValue() {
+    if (!this.input) {
+      throw new Error("Input component is not initialized.");
+    }
+    return this.input.getValue();
+  }
   /**
    * Constrói o conteúdo do input com base nas opções fornecidas.
    * @param {Object} options - Opções para configurar o input.
@@ -453,6 +409,12 @@ export class LabeledSelect extends LabeledField {
    */
   setSelectContent(options = {}) {
     this.select.renderContent(this._buildSelectContent(options));
+  }
+  getValue() {
+    if (!this.select) {
+      throw new Error("Select component is not initialized.");
+    }
+    return this.select.getValue();
   }
   /**
    * Constrói o conteúdo do select com base nas opções fornecidas.
