@@ -246,6 +246,39 @@ export class Select extends ValueField {
   }
 }
 
+
+export class TextArea extends ValueField {
+  /**
+   * @param {string|string[]|null} classList - Lista de classes CSS para o elemento.
+   */
+  constructor(classList = null) {
+    super("textarea", classList);
+  }
+  /**
+   * Renderiza o conteúdo do textarea com base nas opções fornecidas.
+   * @param {Object} options - Opções para configurar o textarea.
+   * @param {string} [options.placeholder] - Texto de placeholder do textarea.
+   * @param {string} [options.value] - Valor inicial do textarea.
+   * @param {string} [options.id] - ID do textarea.
+   * @param {string} [options.idPrefix="textarea"] - Prefixo para gerar um ID aleatório se não for fornecido.
+   * @returns {TextArea} Retorna a instância do TextArea para encadeamento.
+   */
+  renderContent(options = {}) {
+    if (options?.placeholder) {
+      this.setAttribute("placeholder", options.placeholder);
+    }
+    if (options?.value) {
+      this.setAttribute("value", options.value);
+    }
+    this.setAttribute(
+      "id",
+      options?.id || generateRandomId(options?.idPrefix || "textarea")
+    );
+    return this;
+  }
+}
+
+
 export class LabeledField extends Component {
   /**
    * @param {Object} options - Opções para configurar o LabeledField.
@@ -387,8 +420,8 @@ export class LabeledSelect extends LabeledField {
    * @param {Object} options - Opções para configurar o LabeledSelect.
    */
   renderContent(options = {}) {
-    this.setLabelContent(options);
     this.setSelectContent(options);
+    this.setLabelContent(options?.label);
     if (!this.state.isLabelMounted) {
       this.label.render({ target: this.element });
       this.state.isLabelMounted = true;
