@@ -340,12 +340,12 @@ export class Component {
   /**
    * Updates the component in the DOM.
    */
-  update(options = {}) {
+  update(options = {}, renderContent = false) {
     if (!this._isMounted) return;
     this.beforeUpdate();
     // Perform DOM updates here (e.g., re-render the component's content)
     this._renderOptions = options;
-    this.renderContent(options); // Call renderContent to update the DOM
+    if (renderContent) this.renderContent(options); // Call renderContent to update the DOM
     this.afterUpdate();
   }
 

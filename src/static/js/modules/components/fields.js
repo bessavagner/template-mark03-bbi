@@ -19,6 +19,12 @@ export class FormElementComponent extends Component {
     }
     super(tagName, classList);
   }
+  renderContent(options = {}) {
+    const attributes = options?.attributes || null;
+    if (attributes && typeof attributes === "object")
+      this.setAttributes(attributes);
+    return this;
+  }
 }
 
 export class Label extends FormElementComponent {
@@ -33,50 +39,15 @@ export class Label extends FormElementComponent {
    * @param {Object} options - Opções para configurar o label.
    * @param {string} [options.text] - Texto visível do label.
    * @param {string} [options.for] - ID do elemento associado ao label.
-   * @returns {Label} Retorna a instância do Label para encadeamento.
+   * @param {Object} [options.attributes] - Atributos adicionais.
+   * @returns {this} Retorna a instância do Label para encadeamento.
    */
   renderContent(options = {}) {
-    if (options?.text) {
-      this.setText(options.text);
-    }
+    this.setText(options?.text || "Label");
     if (options?.for) {
       this.setAttribute("for", options.for);
     }
-    return this;
-  }
-}
-
-export class Options extends FormElementComponent {
-  /**
-   * @param {string|string[]|null} classList - Lista de classes CSS para o elemento.
-   */
-  constructor(classList = null) {
-    super("option", classList);
-  }
-  /**
-   * Renderiza o conteúdo do option com base nas opções fornecidas.
-   * @param {Object} options - Opções para configurar o option.
-   * @param {string} [options.value] - Valor do option.
-   * @param {string} [options.text] - Texto visível do option.
-   * @returns {Options} Retorna a instância do Options para encadeamento.
-   */
-  renderContent(options = {}) {
-    if (!options?.value) {
-      const value = options?.text || "--";
-      console.warn(
-        `Options: No value provided. Defaulting to ${value} string.`
-      );
-      options.value = value;
-    }
-    if (!options?.text) {
-      console.warn(
-        `Options: No text provided. Defaulting to value "${options.value}".`
-      );
-      options.text = options.value;
-    }
-    this.setAttribute("value", options.value);
-    this.setText(options.text);
-    return this;
+    return super.renderContent(options);
   }
 }
 
@@ -159,11 +130,10 @@ export class Input extends ValueField {
    * Renderiza o conteúdo do input com base nas opções fornecidas.
    * @param {Object} options - Opções para configurar o input.
    * @param {string} [options.type="text"] - O tipo de input (text, password, email etc.).
-   * @param {string} [options.placeholder] - Texto de placeholder do input.
-   * @param {string} [options.value] - Valor inicial do input.
    * @param {string} [options.id] - ID do input.
    * @param {string} [options.idPrefix="input"] - Prefixo para gerar um ID aleatório se não for fornecido.
-   * @returns {Input} Retorna a instância do Input para encadeamento.
+   * @param {Object} [options.attributes] - Atributos adicionais.
+   * @returns {this} Retorna a instância do Input para encadeamento.
    */
   renderContent(options = {}) {
     if (!options?.type || !inputTypes.includes(options.type)) {
@@ -173,17 +143,47 @@ export class Input extends ValueField {
       options.type = "text";
     }
     this.setAttribute("type", options.type);
-    if (options?.placeholder) {
-      this.setAttribute("placeholder", options.placeholder);
-    }
-    if (options?.value) {
-      this.setAttribute("value", options.value);
-    }
+    // Inputs must have id
     this.setAttribute(
       "id",
       options?.id || generateRandomId(options?.idPrefix || "input")
     );
-    return this;
+    return super.renderContent(options);
+  }
+}
+
+export class Options extends ValueField {
+  /**
+   * @param {string|string[]|null} classList - Lista de classes CSS para o elemento.
+   */
+  constructor(classList = null) {
+    super("option", classList);
+  }
+  /**
+   * Renderiza o conteúdo do option com base nas opções fornecidas.
+   * @param {Object} options - Opções para configurar o option.
+   * @param {string} [options.value] - Valor do option.
+   * @param {string} [options.text] - Texto visível do option.
+   * @param {Object} [options.attributes] - Atributos adicionais.
+   * @returns {this} Retorna a instância do Options para encadeamento.
+   */
+  renderContent(options = {}) {
+    if (!options?.value) {
+      const value = options?.text || "--";
+      console.warn(
+        `Options: No value provided. Defaulting to ${value} string.`
+      );
+      options.value = value;
+    }
+    if (!options?.text) {
+      console.warn(
+        `Options: No text provided. Defaulting to value "${options.value}".`
+      );
+      options.text = options.value;
+    }
+    this.setAttribute("value", options.value);
+    this.setText(options.text);
+    return super.renderContent(options);
   }
 }
 
@@ -200,7 +200,8 @@ export class Select extends ValueField {
    * @param {Array<{ value: string, text: string }>} [options.options] - Lista de opções para o select.
    * @param {string} [options.id] - ID do select.
    * @param {string} [options.idPrefix="select"] - Prefixo para gerar um ID aleatório se não for fornecido.
-   * @returns {Select} Retorna a instância do Select para encadeamento.
+   * @param {Object} [options.attributes] - Atributos adicionais.
+   * @returns {this} Retorna a instância do Select para encadeamento.
    */
   renderContent(options = {}) {
     if (!Array.isArray(options?.options) || options.options.length === 0) {
@@ -222,9 +223,9 @@ export class Select extends ValueField {
       if (typeof opt.value !== "string" || typeof opt.text !== "string") {
         throw new Error("Option 'value' and 'text' must be strings.");
       }
-      this.addOption({ value: opt.value, text: opt.text });
+      this.addOption(opt);
     });
-    return this;
+    return super.renderContent(options);
   }
   /**
    * Adds an option to the select.
@@ -246,7 +247,6 @@ export class Select extends ValueField {
   }
 }
 
-
 export class TextArea extends ValueField {
   /**
    * @param {string|string[]|null} classList - Lista de classes CSS para o elemento.
@@ -261,23 +261,18 @@ export class TextArea extends ValueField {
    * @param {string} [options.value] - Valor inicial do textarea.
    * @param {string} [options.id] - ID do textarea.
    * @param {string} [options.idPrefix="textarea"] - Prefixo para gerar um ID aleatório se não for fornecido.
-   * @returns {TextArea} Retorna a instância do TextArea para encadeamento.
+   * @param {Object} [options.attributes] - Atributos adicionais.
+   * @returns {this} Retorna a instância do TextArea para encadeamento.
    */
   renderContent(options = {}) {
-    if (options?.placeholder) {
-      this.setAttribute("placeholder", options.placeholder);
-    }
-    if (options?.value) {
-      this.setAttribute("value", options.value);
-    }
+    // TextAreas must have id
     this.setAttribute(
       "id",
       options?.id || generateRandomId(options?.idPrefix || "textarea")
     );
-    return this;
+    return super.renderContent(options);
   }
 }
-
 
 export class LabeledField extends Component {
   /**
@@ -292,9 +287,44 @@ export class LabeledField extends Component {
     this.label = new Label(labelClassList);
     /** @type {FormElementComponent|Input|Select|null} */
     this.field = null; // Será definido nas subclasses
+    this.state = {
+      isLabelMounted: false,
+      isInputMounted: false,
+    };
   }
+  /**
+   * Renderiza o conteúdo do LabeledInput, incluindo o label e o input.
+   * @param {Object} options - Opções para configurar o LabeledInput.
+   * @param {string} [options.type="text"] - O tipo de input (text, password, email etc.).
+   * @param {string} [options.id] - ID do input.
+   * @param {string} [options.idPrefix="input"] - Prefixo para gerar um ID aleatório se não for fornecido.
+   * @param {Object} [options.label] - Opções para o label.
+   * @param {string} [options.label.text] - Texto visível do label.
+   * @param {string} [options.label.for] - ID do elemento associado ao label.
+   * @param {Object} [options.label.attributes] - Atributos adicionais para o
+   * @param {Object} [options.attributes] - Atributos adicionais para o input.
+   * @returns {this} Retorna a instância do LabeledInput para encadeamento.
+   */
   renderContent(options = {}) {
-    throw new Error("renderContent must be implemented by subclass.");
+    if (this.field == null) throw new Error("Field component is not initialized.");
+    this.renderFieldContent(options);
+    this.renderLabelContent(options?.label);
+    if (!this.state.isLabelMounted) {
+      this.label.render({ target: this.element });
+      this.state.isLabelMounted = true;
+    } else {
+      this.label.update(this._buildLabelContent(options));
+    }
+    if (!this.state.isInputMounted) {
+      this.field.render({ target: this.element });
+      this.state.isInputMounted = true;
+    } else {
+      this.field.update(this._buildFieldContent(options));
+    }
+    return this;
+  }
+  renderFieldContent(options = {}) {
+    throw new Error("renderInputContent must be implemented by subclass.");
   }
   /**
    * Renderiza o conteúdo do label com base nas opções fornecidas.
@@ -302,7 +332,7 @@ export class LabeledField extends Component {
    * @param {string} [options.text] - Texto visível do label.
    * @param {string} [options.for] - ID do elemento associado ao label.
    */
-  setLabelContent(options = {}) {
+  renderLabelContent(options = {}) {
     this.label.renderContent(this._buildLabelContent(options));
   }
   /**
@@ -310,6 +340,7 @@ export class LabeledField extends Component {
    * @param {Object} options - Opções para configurar o label.
    * @param {string} [options.text] - Texto visível do label.
    * @param {string} [options.for] - ID do elemento associado ao label.
+   * @param {Object} [options.attributes] - Atributos adicionais.
    * @returns {Object} Objeto com as propriedades do label.
    */
   _buildLabelContent(options = {}) {
@@ -320,9 +351,16 @@ export class LabeledField extends Component {
       throw new Error("Field component is not initialized or has no ID.");
     }
     return {
-      text: options.text || "Label",
-      for: options.for || this.field.element.id,
+      ...options,
+      ...{
+        text: options.text || "Label",
+        for: options.for || this.field.element.id,
+      },
     };
+  }
+  _buildFieldContent(options = {}) {
+    console.error("_buildFieldContent must be implemented by subclass.");
+    return {};
   }
 }
 
@@ -338,38 +376,13 @@ export class LabeledInput extends LabeledField {
     super(options);
     this.input = new Input(inputClassList);
     this.field = this.input; // Define o campo como input
-    this.state = {
-      isLabelMounted: false,
-      isInputMounted: false,
-    };
-  }
-  /**
-   * Renderiza o conteúdo do LabeledInput, incluindo o label e o input.
-   * @param {Object} options - Opções para configurar o LabeledInput.
-   */
-  renderContent(options = {}) {
-    this.renderInputContent(options);
-    this.setLabelContent(options?.label);
-    if (!this.state.isLabelMounted) {
-      this.label.render({ target: this.element });
-      this.state.isLabelMounted = true;
-    } else {
-      this.label.update(this._buildLabelContent(options));
-    }
-    if (!this.state.isInputMounted) {
-      this.input.render({ target: this.element });
-      this.state.isInputMounted = true;
-    } else {
-      this.input.update(this._buildInputContent(options));
-    }
-    return this;
   }
   /**
    * Renderiza o conteúdo do input com base nas opções fornecidas.
    * @param {Object} options - Opções para configurar o input.
    */
-  renderInputContent(options = {}) {
-    this.input.renderContent(this._buildInputContent(options));
+  renderFieldContent(options = {}) {
+    this.input.renderContent(this._buildFieldContent(options));
   }
   getValue() {
     if (!this.input) {
@@ -381,19 +394,18 @@ export class LabeledInput extends LabeledField {
    * Constrói o conteúdo do input com base nas opções fornecidas.
    * @param {Object} options - Opções para configurar o input.
    * @param {string} [options.type="text"] - O tipo de input (text, password, email etc.).
-   * @param {string} [options.placeholder] - Texto de placeholder do input.
-   * @param {string} [options.value] - Valor inicial do input.
    * @param {string} [options.id] - ID do input.
    * @param {string} [options.idPrefix="input"] - Prefixo para gerar um ID aleatório se não for fornecido.
    * @returns {Object} Objeto com as propriedades do input.
    */
-  _buildInputContent(options = {}) {
+  _buildFieldContent(options = {}) {
     return {
-      type: options.type || "text",
-      placeholder: options.placeholder || "",
-      value: options.value || "",
-      id: options.id || generateRandomId("input"),
-      idPrefix: options.idPrefix || "input",
+      ...options,
+      ...{
+        type: options.type || "text",
+        id: options.id || generateRandomId("input"),
+        idPrefix: options.idPrefix || "input",
+      },
     };
   }
 }
@@ -410,38 +422,13 @@ export class LabeledSelect extends LabeledField {
     super(options);
     this.select = new Select(selectClassList);
     this.field = this.select; // Define o campo como select
-    this.state = {
-      isLabelMounted: false,
-      isSelectMounted: false,
-    };
-  }
-  /**
-   * Renderiza o conteúdo do LabeledSelect, incluindo o label e o select.
-   * @param {Object} options - Opções para configurar o LabeledSelect.
-   */
-  renderContent(options = {}) {
-    this.setSelectContent(options);
-    this.setLabelContent(options?.label);
-    if (!this.state.isLabelMounted) {
-      this.label.render({ target: this.element });
-      this.state.isLabelMounted = true;
-    } else {
-      this.label.update(this._buildLabelContent(options));
-    }
-    if (!this.state.isSelectMounted) {
-      this.select.render({ target: this.element });
-      this.state.isSelectMounted = true;
-    } else {
-      this.select.update(this._buildSelectContent(options));
-    }
-    return this;
   }
   /**
    * Renderiza o conteúdo do select com base nas opções fornecidas.
    * @param {Object} options - Opções para configurar o select.
    */
-  setSelectContent(options = {}) {
-    this.select.renderContent(this._buildSelectContent(options));
+  renderFieldContent(options = {}) {
+    this.select.renderContent(this._buildFieldContent(options));
   }
   getValue() {
     if (!this.select) {
@@ -457,7 +444,7 @@ export class LabeledSelect extends LabeledField {
    * @param {string} [options.idPrefix="select"] - Prefixo para gerar um ID aleatório se não for fornecido.
    * @returns {Object} Objeto com as propriedades do select.
    */
-  _buildSelectContent(options = {}) {
+  _buildFieldContent(options = {}) {
     return {
       options: options.options || [],
       id: options.id || generateRandomId("select"),
@@ -477,212 +464,128 @@ export class FieldsContainer extends Component {
     const classList = options.classList || null;
     super(tagName, classList);
 
-    /** @type {(FieldsContainer | Input | Select | LabeledInput | LabeledSelect | Button)[]} */
-    this.fields = [];
+    /** @type {Object.<string, FormElementComponent> | {}}*/
+    this.fields = {};
     this.state = {
       hasField: this._hasField(),
     };
   }
   renderContent(options = {}) {
-    if (options?.id) {
-      this.setAttribute("id", options.id);
-    }
-    if (options?.action) {
-      this.setAttribute("action", options.action);
-    }
-    if (options?.method) {
-      this.setAttribute("method", options.method);
-    }
-    if (options?.target) {
-      this.setAttribute("target", options.target);
-    }
-    if (options?.fields) {
-      if (!Array.isArray(options?.fields)) {
-        console.warn("FieldsContainer: 'fields' precisa ser array.");
-        return this;
+    if (this.fields == null) throw new Error("No fields added yet");
+    if (!this._hasField())
+      throw new Error(
+        "FieldsContainer must have at least one field to render."
+      );
+    const this_ = this;
+    Object.keys(this.fields).forEach((name) => {
+      const field = this_.fields[name];
+      if (field.isMounted()) {
+        console.warn(
+          `FieldsContainer: "${name}" field is already mounted. Remounting it.`
+        );
+        field.remove();
       }
-      options.fields.forEach((field) => {
-        if (
-          !field.tagName ||
-          !formElementsTag.includes(field.tagName.toLowerCase())
-        ) {
-          if (field.FieldsContainer) {
-            this.renderFieldsContainer(
-              field.FieldsContainer.options || {},
-              field.FieldsContainer.renderOptions || {}
-            );
-          } else {
-            console.warn(
-              "Form: Unsupported field type. Only form elements are allowed."
-            );
-          }
-        } else if (field.tagName.toLowerCase() === "input") {
-          this.renderInput(field.options || {}, field.renderOptions || {});
-        } else if (field.tagName.toLowerCase() === "select") {
-          this.renderSelect(field.options || {}, field.renderOptions || {});
-        } else if (field.tagName.toLowerCase() === "button") {
-          this.renderButton(field.options || {}, field.renderOptions || {});
-        }
-      });
-    }
+      if (field instanceof FormElementComponent) field.renderContent();
+      field.render({ target: this_.element });
+    });
     return this;
-  }
-  renderInput(options = {}, renderOptions = {}) {
-    this.addField(
-      this._buildInputContent(options, renderOptions).render({
-        target: this.element,
-      })
-    );
-    this.setState({
-      hasField: this._hasField(),
-    });
-  }
-  renderSelect(options = {}, renderOptions = {}) {
-    this.addField(
-      this._buildSelectContent(options, renderOptions).render({
-        target: this.element,
-      })
-    );
-    this.setState({
-      hasField: this._hasField(),
-    });
-  }
-  renderFieldsContainer(options = {}, renderOptions = {}) {
-    const container = this._buildFieldsContainerContent(
-      options,
-      renderOptions
-    ).render({
-      target: this.element,
-    });
-    container.fields.forEach((field) => {
-      this.fields.push(field);
-      if (field.getAttribute("type") === "submit") {
-        this.state.hasSubmitButton = true;
-        this.submitButton = field;
-      }
-    });
-    this.setState({
-      hasField: this._hasField(),
-    });
-  }
-  renderButton(options = {}, renderOptions = {}) {
-    this.addField(
-      this._buildButtonContent(options, renderOptions).render({
-        target: this.element,
-      })
-    );
-    this.setState({
-      hasField: this._hasField(),
-    });
   }
   /**
-   * Adiciona um campo ao atributo fields.
-   * * @param {Input|LabeledInput|LabeledSelect|Button} field - O campo a ser adicionado.
-   * * @returns {this}
+   * Adiciona um campo já renderizado ao container.
+   * @param {string} name - O nome do campo.
+   * @param {FormElementComponent} field - O campo já renderizado a ser adicionado.
+   * @returns {FieldsContainer} Retorna a instância do FieldsContainer para encadeamento.
+   * @throws {Error} Se o nome ou o campo não forem fornecidos.
    */
-  addField(field) {
-    this.fields.push(field);
-    if (field.getAttribute("type") === "submit") {
-      this.state.hasSubmitButton = true;
-      this.submitButton = field;
+  addRenderedField(name, field) {
+    if (!name || !field) {
+      throw new Error("FieldsContainer: 'name' and 'field' are required.");
     }
+    if (this.fields.hasOwnProperty(name)) {
+      console.warn(
+        `FieldsContainer: container already has "${name}" element. Overriding it...`
+      );
+    }
+    if (this.fields == null) this.fields = {};
+    this.fields[name] = field;
+    this._setHasField();
     return this;
+  }
+  /**
+   * Adiciona um campo ao container.
+   * @param {string} name - O nome do campo.
+   * @param {typeof FormElementComponent | typeof ValueField | typeof Input | typeof Select | typeof TextArea | typeof LabeledField | typeof LabeledInput | typeof LabeledSelect | typeof FieldsContainer | typeof Button} FieldClass - Classe do elemento a ser adicionado.
+   * @param {Object} [constructorOptions={}] - Opções adicionais para o construtor do elemento.
+   * @param {Object} [renderOptions={}] - Opções de renderização para o campo.
+   * @returns {FieldsContainer} Retorna a instância do FieldsContainer para encadeamento.
+   * */
+  addField(
+    name,
+    FieldClass,
+    constructorOptions = {},
+    renderOptions = {}
+  ) {
+    if (!name || !FieldClass) {
+      throw new Error("FieldsContainer: 'name' and 'FieldClass' are required.");
+    }
+    if (this.fields.hasOwnProperty(name)) {
+      console.warn(
+        `FieldsContainer: container already has "${name}" element. Overriding it...`
+      );
+    }
+
+    renderOptions.attributes = {
+      ...renderOptions?.attributes,
+      name: name,
+    }
+    const field = new FieldClass(constructorOptions).renderContent(
+      renderOptions
+    );
+
+    if (this.fields == null) this.fields = {};
+    this.fields[name] = field;
+    this._setHasField();
+    return this;
+  }
+  getValues({ nested = false, prefix = "" } = {}) {
+    if (!this._hasField()) {
+      throw new Error("FieldsContainer has no fields to get values from.");
+    }
+
+    const values = {};
+    Object.entries(this.fields).forEach(([name, field]) => {
+      if (field instanceof Button) return;
+      const fullName = prefix ? `${prefix}.${name}` : name;
+
+      if (field instanceof FieldsContainer) {
+        const subValues = field.getValues({ nested, prefix: fullName });
+        if (nested) {
+          values[name] = subValues;
+        } else {
+          Object.assign(values, subValues);
+        }
+      } else if (field instanceof ValueField || field instanceof Input || 
+                 field instanceof Select || field instanceof TextArea ||
+                 field instanceof LabeledInput || field instanceof LabeledSelect) {
+        values[fullName] = field.getValue();
+      } else {
+        console.warn(`FieldsContainer: "${name}" is not a ValueField or container. Skipping.`);
+      }
+    });
+
+    return values;
   }
 
-  /**
-   * Atualiza o campo com base no índice ou objeto fornecido.
-   * @param {number|Object} label - Índice do campo ou objeto com atributos 'by' e 'value'.
-   * @param {Object} [options={}] - Novas opções para atualizar o campo.
-   * @returns {void}
-   */
-  updateField(label, options = {}) {
-    if (typeof label === "number") {
-      if (label < 0 || label >= this.fields.length) {
-        console.warn(`Form: Índice ${label} fora do intervalo.`);
-        return;
-      }
-      this.fields[label].update(options);
-    } else if (typeof label === "object") {
-      if (!label.by || !label.value) {
-        console.warn(
-          "Form: Parâmetro inválido. Use { by: 'name'|'id', value: 'valor' }."
-        );
-        return;
-      }
-      if (label.by === "name") {
-        this.updateFieldByName(label.value, options);
-        return;
-      }
-      if (label.by === "id") {
-        this.updateFieldById(label.value, options);
-        return;
-      }
-    }
-  }
-  /**
-   * Atualiza o campo cujo atributo name corresponde ao argumento.
-   * @param {string} name - O atributo name do campo desejado.
-   * @param {Object} options - Novas opções para atualizar o campo.
-   * @returns {void}
-   */
-  updateFieldByName(name, options = {}) {
-    const field = this.fields.find(
-      (f) =>
-        "field" in f &&
-        f.field.getAttribute &&
-        f.field.getAttribute("name") === name
-    );
-    if (!field) {
-      console.warn(`Form: Nenhum campo com name="${name}" encontrado.`);
-      return;
-    }
-    if (typeof field.update === "function") {
-      field.update(options);
-    } else {
-      console.warn("Form: Este campo não suporta update.");
-    }
-    return;
-  }
-  /**
-   * Atualiza o campo cujo atributo id corresponde ao argumento.
-   * @param {string} id - O atributo id do campo desejado.
-   * @param {Object} options - Novas opções para atualizar o campo.
-   * @returns {void}
-   */
-  updateFieldById(id, options = {}) {
-    const field = this.fields.find(
-      (f) =>
-        "field" in f &&
-        f.field.getAttribute &&
-        f.field.getAttribute("id") === id
-    );
-    if (!field) {
-      console.warn(`Form: Nenhum campo com id="${id}" encontrado.`);
-      return;
-    }
-    if (typeof field.update === "function") {
-      field.update(options);
-    } else {
-      console.warn("Form: Este campo não suporta update.");
-    }
-    return;
-  }
-  _buildInputContent(options = {}, renderOptions = {}) {
-    if (renderOptions.label) {
-      return new LabeledInput(options).renderContent(renderOptions);
-    }
-    return new Input(options?.classList).renderContent(renderOptions);
-  }
-  _buildSelectContent(options = {}, renderOptions = {}) {
-    return new LabeledSelect(options).renderContent(renderOptions);
-  }
-  _buildFieldsContainerContent(options = {}, renderOptions = {}) {
-    return new FieldsContainer(options).renderContent(renderOptions);
-  }
-  _buildButtonContent(options = {}, renderOptions = {}) {
-    return new Button(options).renderContent(renderOptions);
-  }
   _hasField() {
-    return this.fields.length > 0;
+    return this.fields != null && Object.keys(this.fields).length > 0;
+  }
+  _setHasField() {
+    if (!this._hasField()) {
+      if (this.isMounted())
+        console.warn(
+          "Component mounted. Avoid mounting empty fields container."
+        );
+      this.setState({ hasField: this._hasField() });
+    }
   }
 }
