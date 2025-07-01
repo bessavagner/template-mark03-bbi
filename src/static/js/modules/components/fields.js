@@ -103,19 +103,20 @@ export class ValueField extends FormElementComponent {
       this.disable();
     }
   }
+  /**
+   * Atualiza o valor do campo a partir do DOM.
+   * @returns {this}
+   * @throws {Error} Se o elemento não suportar a propriedade value.
+   */
   refresh() {
-    const id = this.element.id;
-    if (id !== null && id !== "") {
-      const element = document.getElementById(id);
-      if (element) {
-        this.setValue(element instanceof HTMLInputElement ? element.value : "");
-        return this;
-      }
-      throw new Error(
-        `Input element with id '${id}' not found in the document.`
-      );
+    const element = this.element;
+
+    if (element && "value" in element && typeof element.value === "string") {
+      this.setValue(element.value);
+      return this;
     }
-    throw new Error("Input element not found or has no id");
+
+    throw new Error("Element does not support string value retrieval.");
   }
 }
 
@@ -306,7 +307,8 @@ export class LabeledField extends Component {
    * @returns {this} Retorna a instância do LabeledInput para encadeamento.
    */
   renderContent(options = {}) {
-    if (this.field == null) throw new Error("Field component is not initialized.");
+    if (this.field == null)
+      throw new Error("Field component is not initialized.");
     this.renderFieldContent(options);
     this.renderLabelContent(options?.label);
     if (!this.state.isLabelMounted) {
@@ -519,12 +521,7 @@ export class FieldsContainer extends Component {
    * @param {Object} [renderOptions={}] - Opções de renderização para o campo.
    * @returns {FieldsContainer} Retorna a instância do FieldsContainer para encadeamento.
    * */
-  addField(
-    name,
-    FieldClass,
-    constructorOptions = {},
-    renderOptions = {}
-  ) {
+  addField(name, FieldClass, constructorOptions = {}, renderOptions = {}) {
     if (!name || !FieldClass) {
       throw new Error("FieldsContainer: 'name' and 'FieldClass' are required.");
     }
@@ -537,7 +534,7 @@ export class FieldsContainer extends Component {
     renderOptions.attributes = {
       ...renderOptions?.attributes,
       name: name,
-    }
+    };
     const field = new FieldClass(constructorOptions).renderContent(
       renderOptions
     );
@@ -564,12 +561,19 @@ export class FieldsContainer extends Component {
         } else {
           Object.assign(values, subValues);
         }
-      } else if (field instanceof ValueField || field instanceof Input || 
-                 field instanceof Select || field instanceof TextArea ||
-                 field instanceof LabeledInput || field instanceof LabeledSelect) {
+      } else if (
+        field instanceof ValueField ||
+        field instanceof Input ||
+        field instanceof Select ||
+        field instanceof TextArea ||
+        field instanceof LabeledInput ||
+        field instanceof LabeledSelect
+      ) {
         values[fullName] = field.getValue();
       } else {
-        console.warn(`FieldsContainer: "${name}" is not a ValueField or container. Skipping.`);
+        console.warn(
+          `FieldsContainer: "${name}" is not a ValueField or container. Skipping.`
+        );
       }
     });
 

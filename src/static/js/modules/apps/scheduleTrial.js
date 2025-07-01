@@ -8,7 +8,6 @@ import {
   FieldsContainer,
 } from "../components/fields.js";
 
-
 class ScheduleForm extends Form {
   constructor(classList = null) {
     super(
@@ -151,8 +150,39 @@ class ScheduleForm extends Form {
       }
     );
   }
+  getFormData() {
+    const data = super.getFormData();
+    console.log(data);
+    return {
+      "nome_sobrenome": data.nomeSobrenome,
+      "email": data["emailTelefone.email"],
+      "telefone": data["emailTelefone.telefone"],
+      "data": data["dataHorario.data"],
+      "horario": data["dataHorario.horario"],
+    }
+  }
   async handleSubmit(event) {
-    console.log("Form submitted with values:", this.getFormData());
+    event.preventDefault();
+    const data = this.getFormData();
+    try {
+      console.log(data);
+      const response = await fetch("/schedule-trial", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (result.popup) {
+        // Aqui você chamaria um componente ou utilitário que exibe popups
+        console.log(result.popup); // você implementará `showPopup`
+      }
+    } catch (error) {
+      console.error("Erro ao enviar formulário:", error);
+    }
   }
 }
 

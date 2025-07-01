@@ -1,7 +1,7 @@
 from aiohttp import web
 
 from app.views.home import HomeView
-from app.config import settings
+from app.views.schedule import ScheduleTrialView
 
 
 def static_path(path):
@@ -10,4 +10,5 @@ def static_path(path):
 
 def setup(app: web.Application) -> web.Application:
     app.router.add_view("/", HomeView)
+    app.router.add_view("/schedule-trial", ScheduleTrialView)
     return app
