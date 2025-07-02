@@ -17,7 +17,16 @@ export class BenefitsCard extends Card {
   renderContent(options = {}) {
     const { title = "", descriptions = [], svg = "" } = options;
     this.setState(options);
-
+    if (options?.eventListeners) {
+      for (const [event, handler] of Object.entries(options.eventListeners)) {
+        this.addEventListener(event, handler);
+      }
+    }
+    if (options?.styles) {
+      for (const [property, value] of Object.entries(options.styles)) {
+        this.element.style[property] = value;
+      }
+    }
     return super.renderContent({
       header: svg,
       body: this._buildBodyContent(title, descriptions),

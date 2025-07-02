@@ -17,7 +17,21 @@ export const cardsData = [
             "Treinadores qualificados",
             "Suporte ininterrupto",
         ],
-        svg: coaches
+        svg: coaches,
+        eventListeners: {
+            click: (e) => {
+                e.preventDefault();
+                const coachesSection = document.getElementById("coaches");
+                if (coachesSection) {
+                    coachesSection.scrollIntoView({ behavior: "smooth" });
+                } else {
+                    console.warn("#coaches não encontrado para scroll.");
+                }
+            }
+        },
+        styles: {
+            cursor: "pointer",
+        }
     },
     {
         title: "Resultados rápidos e visíveis",
