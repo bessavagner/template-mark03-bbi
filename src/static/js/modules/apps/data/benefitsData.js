@@ -40,6 +40,20 @@ export const cardsData = [
             "Evolução constante",
             "Metas alcançadas",
         ],
-        svg: plot
+        svg: plot,
+        eventListeners: {
+            click: (e) => {
+                e.preventDefault();
+                const testimonialsSection = document.getElementById("testimonials");
+                if (testimonialsSection) {
+                    testimonialsSection.scrollIntoView({ behavior: "smooth" });
+                } else {
+                    console.warn("#testimonials não encontrado para scroll.");
+                }
+            }
+        },
+        styles: {
+            cursor: "pointer",
+        }
     }
 ]
