@@ -1,5 +1,6 @@
 //@ts-check
 
+import { AppHero } from "./modules/apps/hero.js";
 import { AppBenefits } from "./modules/apps/benefits.js";
 import { AppHowItWorks } from "./modules/apps/how.js";
 import { TestimonyCarousel } from "./modules/apps/testimony.js";
@@ -8,6 +9,9 @@ import { ScheduleFormApp } from "./modules/apps/scheduleTrial.js";
 
 
 document.addEventListener("DOMContentLoaded", () => {
+    new AppHero().init("#app-hero", {
+        buttonTargetId: "contact"
+    });
     new AppBenefits().init("#app-cards-benefits");
     new AppHowItWorks("#app-steps").init();
     new TestimonyCarousel("#app-testimonials").init();

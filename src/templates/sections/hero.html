@@ -1,21 +1,7 @@
-<section id="hero-section" class="hero items-start md:items-center relative h-screen md:bg-transparent">
+<section id="app-hero" class="hero items-start md:items-center relative h-screen md:bg-transparent">
 
 
-  <div class="hero-content w-10/12 md:w-full max-w-full relative text-center mt-30 md:mt-0 mx-auto px-4 sm:px-6 lg:px-8 z-10">
-    <div class="hidden md:flex w-1/2"></div>
-    <div class="w-full md:w-1/2 max-w-2xl mx-auto space-y-6">
-      <h1 class="text-4xl sm:text-5xl md:text-6xl barlow-condensed-semibold leading-tight">
-        Pronto para o seu <span class="text-primary">Cross Training</span> em Crateús?
-      </h1>
-      <p class="text-lg sm:text-xl md:text-2xl roboto-flex-400">
-        Treinos variados, desafiadores e 100% adaptados ao seu nível de condicionamento.
-      </p>
-      <a href="#contato" class="btn btn-primary btn-lg mt-4 px-8 py-4 rounded-full bebas-neue-regular text-xl shadow-neon">
-        Marque seu treino experimental
-      </a>
-    </div>
-  </div>
-  <img src="{{ static('images/hero-bg.png') }}" alt="Imagem de fundo do box Base Inicial"
+  <img id="hero-bg" src="{{ static('images/hero-bg.png') }}" alt="Imagem de fundo do box Base Inicial"
     class="absolute inset-0 w-full h-full object-cover opacity-70 z-0" />
   <!-- Sobreposição escura para realçar texto -->
   <div class="absolute h-full w-full bg-linear-to-r from-transparent from-20% via-secondary via-95% to-transparent"></div>
