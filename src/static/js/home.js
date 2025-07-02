@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
         buttonTargetId: "contact"
     });
     new AppBenefits().init("#app-cards-benefits");
-    new AppHowItWorks("#app-steps").init();
+    new AppHowItWorks("#app-steps", { scrollTargetId: "contact" }).init();
     new TestimonyCarousel("#app-testimonials").init();
     new CoachesSection("#app-coaches", "/static/videos/video-institucional-1.mp4");
     new ScheduleFormApp().init("#app-contact");
