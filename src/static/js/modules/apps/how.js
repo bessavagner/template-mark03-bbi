@@ -76,14 +76,11 @@ class HowCtaButton extends Component {
 
 export class AppHowItWorks extends Component {
   /**
-   * @param {string|HTMLElement|Component|Node} target
    * @param {{ scrollTargetId?: string }} options
    */
-  constructor(target, options = {}) {
+  constructor(options = {}) {
     super("div", "relative mt-16");
     this.scrollTargetId = options.scrollTargetId || "contact";
-
-    this.render({ target });
 
     // linha horizontal de conexão (estética)
     new Component("div",
@@ -100,7 +97,7 @@ export class AppHowItWorks extends Component {
       .render({ target: this.element });
   }
 
-  init() {
+  init(target) {
     stepsData.forEach(step =>
       new HowStepCard().renderContent(step).render({ target: this.stepsWrapper.element })
     );
@@ -108,5 +105,7 @@ export class AppHowItWorks extends Component {
     const cta = new HowCtaButton(this.scrollTargetId);
     cta.render({ target: this.ctaWrapper.element });
     cta.init();
+
+    this.render({ target: target });
   }
 }
