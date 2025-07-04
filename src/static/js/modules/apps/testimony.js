@@ -1,7 +1,7 @@
-// /static/js/modules/testimonyCard.js
 //@ts-check
 import { Component } from "../engine/core.js";
 import { Card } from "../components/display.js";
+import { Anchor } from "../components/actions.js";
 import { testimonyData } from "./data/testimonyData.js";
 /**
  * Card 3-D para depoimentos.
@@ -179,5 +179,50 @@ export class TestimonyCarousel extends Component {
 
   stop() {
     clearInterval(this.timer);
+  }
+}
+
+export class AppTestimony extends Component {
+  constructor() {
+    super("section", "flex flex-col items-center justify-center md:grid-cols-2 w-full gap-4");
+    this.carousel = new TestimonyCarousel();
+  }
+
+  renderContent() {
+    this.addComponent(
+      new Component("h2", "barlow-condensed-bold text-2xl md:text-3xl text-center text-primary")
+        .setText("O que nossos alunos dizem")
+    )
+    this.carousel.addClass("mt-10")
+    this.carousel.init(this.element);
+    new Component("div", "flex flex-col w-1/2 h-full items-center justify-evenly mt-8 space-y-4 mx-auto")
+      .addComponent(
+        new Component("p", "text-xl opacity-80 mt-2")
+          .setText("Mais de 80% de agendados se tornam alunos")
+        )
+      .addComponent(
+        new Anchor({
+          targetBlank: false,
+          classList:
+            "btn btn-accent w-64 text-lg px-6 py-3 mt-4 rounded-full shadow-neon-accent hover:btn-success hover:shadow-neon-success transition-all duration-300 ",
+        })
+          .renderContent({
+            text: "Agendar Aula",
+            onClick: (e) => {
+              e.preventDefault();
+              document
+                .getElementById("contact")
+                ?.scrollIntoView({ behavior: "smooth" });
+            },
+          })
+          .setText("Agendar Aula")
+      )
+      .render({ target: this.element });
+    return this;
+  }
+
+  init(target) {
+    this.render({ target });
+    this.renderContent();
   }
 }
