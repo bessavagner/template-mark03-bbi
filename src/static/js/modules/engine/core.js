@@ -301,6 +301,7 @@ export class Component {
     }
     options.target = this.element;
     component.render(options);
+    return this;
   }
   /**
    * Renders the component into another element.

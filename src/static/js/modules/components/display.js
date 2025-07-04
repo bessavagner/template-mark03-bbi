@@ -163,3 +163,21 @@ export class Card extends Component {
     return this;
   }
 }
+
+
+export class Circle extends Component {
+  constructor() {
+    super("div", "rounded-full flex items-center justify-center");
+  }
+  renderContent(options = {}) {
+    const size = options.size || "30";
+    const mdSize = options.msSize || "40";
+    const bgClass = options.bgClass || "bg-primary";
+    const classList = options.classList || "";
+    this.addClassList(`w-${size} h-${size} md:w-${mdSize} md:h-${mdSize} ${bgClass} ${classList}`);
+    if (options?.content) {
+      this.setContent(options.content);
+    }
+    return this;
+  }
+}
