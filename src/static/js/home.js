@@ -6,6 +6,7 @@ import { AppTestimony } from "./modules/apps/testimony.js";
 import { AppStaff } from "./modules/apps/coaches.js";
 import { AppLocationContact } from "./modules/apps/locationContact.js";
 import { ScheduleFormApp } from "./modules/apps/scheduleTrial.js";
+import { AppFooter } from "./modules/apps/footer.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     new AppHero().init("#app-hero", { buttonTargetId: "contact" });
@@ -14,4 +15,5 @@ document.addEventListener("DOMContentLoaded", () => {
     new AppStaff().init("#app-coaches");
     new AppLocationContact().init("#app-location-contact");
     new ScheduleFormApp().init("#app-contact");
+    new AppFooter().init("#app-footer");
 });

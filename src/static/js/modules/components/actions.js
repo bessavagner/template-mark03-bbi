@@ -69,3 +69,25 @@ export class Anchor extends Component {
     return this;
   }
 }
+
+export class AnchorToSection extends Anchor {
+  constructor() {
+    super({targetBlank: false, classList: "text-gray-500 hover:text-primary" });
+  }
+  renderContent(options = {}) {
+    const sectionTargetId = options?.sectionTargetId;
+    if (!sectionTargetId) {
+      throw new Error("sectionTargetId is required for FooterAnchor");
+    }
+    return super.renderContent({
+      ...options,
+      onClick: (e) => {
+        e.preventDefault();
+        console.log(`Scrolling to section: ${sectionTargetId}`);
+        document
+          .getElementById(sectionTargetId)
+          ?.scrollIntoView({ behavior: "smooth" });
+      },
+    });
+  }
+}
