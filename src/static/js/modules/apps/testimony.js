@@ -100,12 +100,10 @@ export class TestimonyCard extends Card {
  */
 export class TestimonyCarousel extends Component {
   /**
-   * @param {string|HTMLElement|Component|Node} target
    * @param {{ interval?: number }} [opts]
    */
-  constructor(target, opts = {}) {
+  constructor(opts = {}) {
     super("div", "relative grid grid-cols-3 gap-8 items-center h-[440px]");
-    this.render({ target });
 
     /** @type {TestimonyCard[]} */
     this.cards = [];
@@ -123,7 +121,8 @@ export class TestimonyCarousel extends Component {
     this.timer = undefined;
   }
 
-  init() {
+  init(target) {
+    this.render({ target });
     this.updateVisuals();
     this.timer = setInterval(() => this.next(), this.interval);
   }

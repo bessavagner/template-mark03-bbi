@@ -117,16 +117,15 @@ export class CoachCard2 extends Component {
  * • Dois CoachCards à direita
  */
 export class CoachesSection extends Component {
-  /**
-   * @param {string|HTMLElement|Component|Node} target  — seletor ou elemento onde injetar a seção
-   * @param {string} videoSrc                         — URL do vídeo institucional
-   */
-  constructor(target, videoSrc) {
+  constructor() {
     super("section",
       "py-16 bg-base-100 text-base-content"
     );
-    this.setId("team-coaches").render({ target });
+    this.setId("team-coaches");
+  }
+  renderContent(options = {}) {
 
+    const videoSrc = options.videoSrc || "/static/videos/video-institucional-1.mp4";
     // container 2-colunas
     const grid = new Component("div",
       "container mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-8 items-start"
@@ -153,5 +152,11 @@ export class CoachesSection extends Component {
     coachesData.forEach(coach =>
       new CoachCard().renderContent(coach).render({ target: cardsWrapper.element })
     );
+    return this;
+  }
+  init(target, options = {}) {
+    this.render({ target: target });
+    // renderiza o conteúdo interno
+    this.renderContent(options);
   }
 }

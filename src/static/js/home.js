@@ -11,9 +11,9 @@ import { ScheduleFormApp } from "./modules/apps/scheduleTrial.js";
 document.addEventListener("DOMContentLoaded", () => {
     new AppHero().init("#app-hero", { buttonTargetId: "contact" });
     new AppBenefits().init("#app-cards-benefits");
-    new AppHowItWorks({ scrollTargetId: "contact" }).init("#app-steps");
-    new TestimonyCarousel("#app-testimonials").init();
-    new CoachesSection("#app-coaches", "/static/videos/video-institucional-1.mp4");
+    new AppHowItWorks().init("#app-steps", { buttonTargetId: "contact" });
+    new TestimonyCarousel().init("#app-testimonials");
+    new CoachesSection().init("#app-coaches", {videoSrc: "/static/videos/video-institucional-1.mp4"});
     new AppLocationContact().init("#app-location-contact");
     new ScheduleFormApp().init("#app-contact");
 });

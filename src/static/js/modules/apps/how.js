@@ -50,25 +50,23 @@ export class HowStepCard extends Card {
  * Botão CTA com scroll suave
  */
 class HowCtaButton extends Component {
-  constructor(scrollTargetId = "contact") {
+  constructor() {
     super("a",
       "btn btn-primary hover:btn-success text-3xl px-8 py-8 mt-10 " +
       "rounded-full shadow-neon hover:shadow-neon-success transition-all duration-300 " +
       "font-heading barlow-condensed-semibold"
     );
-    this.setAttributes({ href: `#${scrollTargetId}` });
     this.setText("Agendar treino experimental");
-    this.scrollTargetId = scrollTargetId;
   }
 
-  init() {
+  init(buttonTargetId = "contact") {
     this.addEventListener("click", (e) => {
       e.preventDefault();
-      const target = document.getElementById(this.scrollTargetId);
+      const target = document.getElementById(buttonTargetId);
       if (target) {
         target.scrollIntoView({ behavior: "smooth" });
       } else {
-        console.warn(`#${this.scrollTargetId} não encontrado.`);
+        console.warn(`#${buttonTargetId} não encontrado.`);
       }
     });
   }
@@ -76,11 +74,11 @@ class HowCtaButton extends Component {
 
 export class AppHowItWorks extends Component {
   /**
-   * @param {{ scrollTargetId?: string }} options
+   * @param {{ buttonTargetId?: string }} options
    */
   constructor(options = {}) {
     super("div", "relative mt-16");
-    this.scrollTargetId = options.scrollTargetId || "contact";
+    this.buttonTargetId = options.buttonTargetId || "contact";
 
     // linha horizontal de conexão (estética)
     new Component("div",
@@ -95,17 +93,19 @@ export class AppHowItWorks extends Component {
 
     this.ctaWrapper = new Component("div", "mt-16 text-center")
       .render({ target: this.element });
+    this.cta = new HowCtaButton();
   }
-
-  init(target) {
+  renderContent(options = {}) {
     stepsData.forEach(step =>
       new HowStepCard().renderContent(step).render({ target: this.stepsWrapper.element })
     );
-
-    const cta = new HowCtaButton(this.scrollTargetId);
-    cta.render({ target: this.ctaWrapper.element });
-    cta.init();
-
+    this.cta.render({ target: this.ctaWrapper.element });
+    
+  }
+  init(target, options = {}) {
+    this.renderContent(options);
+    const buttonTargetId = options.buttonTargetId || "contact";
+    this.cta.init(buttonTargetId);
     this.render({ target: target });
   }
 }
