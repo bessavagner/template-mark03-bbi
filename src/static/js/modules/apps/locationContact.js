@@ -1,27 +1,45 @@
 // static/js/modules/apps/locationContact.js
 // @ts-check
 import { Component } from "../engine/core.js";
+import { Anchor } from "../components/actions.js";
 import { instagramPrimaryContent, whatsappPrimaryContent } from "../svg.js";
 
-/**
- * Botão genérico (link estilizado).
- */
-class ActionButton extends Component {
-  /**
-   * @param {{ href:string, text:string, extraClasses?:string, targetBlank?:boolean }} opts
-   */
-  constructor({ href, text, extraClasses = "", targetBlank = true }) {
-    super(
-      "a",
-      "btn text-lg px-6 py-3 rounded-full shadow-neon hover:btn-success " +
-        "hover:shadow-neon-success transition-all duration-300 " +
-        extraClasses
-    );
-    this.setAttributes({
-      href,
-      ...(targetBlank && { target: "_blank", rel: "noopener noreferrer" }),
-    });
-    this.setText(text);
+export class GoogleMapsMarker extends Component {
+  constructor() {
+    super("gmp-advanced-marker");
+  }
+  renderContent(options = {}) {
+    if (options?.position) {
+      this.setAttribute("position", options.position);
+    }
+    if (options?.title) {
+      this.setAttribute("title", options.title);
+    }
+    return this;
+  }
+}
+
+export class GoogleMapsMap extends Component {
+  constructor() {
+    super("gmp-map");
+  }
+  addMarker(options = {}) {
+    new GoogleMapsMarker()
+      .renderContent(options)
+      .render({ target: this.element });
+    return this;
+  }
+  renderContent(options = {}) {
+    if (options?.center) {
+      this.setAttribute("center", options.center);
+    }
+    if (options?.zoom) {
+      this.setAttribute("zoom", options.zoom);
+    }
+    if (options?.mapId) {
+      this.setAttribute("map-id", options.mapId);
+    }
+    return this;
   }
 }
 
@@ -35,10 +53,7 @@ export class AppLocationContact extends Component {
    *           staticMapUrl:string, scheduleTargetId?:string }} opts
    */
   constructor(opts) {
-    super(
-      "div",
-      "py-20 w-full"
-    );
+    super("div", "py-20 w-full");
     this.opts = { scheduleTargetId: "contact", ...opts };
   }
 
@@ -64,21 +79,21 @@ export class AppLocationContact extends Component {
 
   /** Mapa estático clicável */
   _buildMap() {
-    const container = new Component("div", "w-96 h-96 max-w-1/2 mx-auto md:mr-0");
-    const map = new Component("gmp-map", "w-full")
-      .setAttributes({
-        center: "-5.177338123321533,-40.67045211791992",
-        zoom: "14",
-        "map-id": "DEMO_MAP_ID",
-      })
-      .render({ target: container.element });
-
-    new Component("gmp-advanced-marker")
-      .setAttributes({
+    const container = new Component(
+      "div",
+      "w-96 h-96 max-w-1/2 mx-auto md:mr-0"
+    );
+    new GoogleMapsMap()
+      .addMarker({
         position: "-5.177338123321533,-40.67045211791992",
         title: "Localização do Box Base Inicial",
       })
-      .render({ target: map.element });
+      .renderContent({
+        center: "-5.177338123321533,-40.67045211791992",
+        zoom: "14",
+        mapId: "DEMO_MAP_ID",
+      })
+      .render({ target: container.element });
 
     return container;
   }
@@ -109,41 +124,38 @@ export class AppLocationContact extends Component {
     ).render({ target: wrapper.element });
 
     // WhatsApp
-
-    new Component("a")
-        .setAttributes({
-            target: "_blank",
-            href: this.opts.whatsappUrl
-        })
-        .setContent(whatsappPrimaryContent)
-        .render({ target: btnGroup.element });
+    new Anchor({ href: this.opts.whatsappUrl })
+      .setContent(whatsappPrimaryContent)
+      .render({ target: btnGroup.element });
 
     // Instagram opcional
     if (this.opts.instagramUrl) {
-        new Component("a", "my-auto")
-            .setAttributes({
-                target: "_blank",
-                href: this.opts.instagramUrl
-            })
-            .setContent(instagramPrimaryContent)
-            .render({ target: btnGroup.element });
+      new Component("a", "my-auto")
+        .setAttributes({
+          target: "_blank",
+          href: this.opts.instagramUrl,
+        })
+        .setContent(instagramPrimaryContent)
+        .render({ target: btnGroup.element });
     }
 
     // Agendar aula (scroll para #contact)
-    const agendarBtn = new ActionButton({
-      href: `#${this.opts.scheduleTargetId}`,
-      text: "Agendar Aula",
+    new Anchor({
       targetBlank: false,
-      extraClasses: "btn-accent shadow-neon-accent",
-    });
-    agendarBtn.render({ target: btnGroup.element });
-    agendarBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      document
-        .getElementById(this.opts.scheduleTargetId)
-        ?.scrollIntoView({ behavior: "smooth" });
-    });
-
+      classList:
+        "btn btn-accent text-lg px-6 py-3 rounded-full shadow-neon-accent hover:btn-success hover:shadow-neon-success transition-all duration-300 ",
+    })
+      .renderContent({
+        text: "Agendar Aula",
+        onClick: (e) => {
+          e.preventDefault();
+          document
+            .getElementById(this.opts.scheduleTargetId)
+            ?.scrollIntoView({ behavior: "smooth" });
+        },
+      })
+      .setText("Agendar Aula")
+      .render({ target: btnGroup.element });
     return wrapper;
   }
 }
