@@ -55,6 +55,16 @@ const li = new Component("li",
     return ul;
   }
 
+  renderContent() {
+    this._buildList().render({ target: this.element });
+    // this._buildCTA().render({ target: this.element });
+  }
+
+  init(target) {
+    this.render({ target });
+    this.renderContent();
+  }
+
   _buildCTA() {
     return new Button({
       classList:
@@ -70,15 +80,5 @@ const li = new Component("li",
           ?.scrollIntoView({ behavior: "smooth" });
       },
     });
-  }
-
-  renderContent() {
-    this._buildList().render({ target: this.element });
-    this._buildCTA().render({ target: this.element });
-  }
-
-  init(target) {
-    this.render({ target });
-    this.renderContent();
   }
 }

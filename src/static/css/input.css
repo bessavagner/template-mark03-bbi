@@ -61,7 +61,14 @@
   }
   section {
   }
-  
+  /* em input.css */
+  #sticky-cta {
+    z-index: 50;
+  }
+  @media (min-width: 768px) {
+    #sticky-cta { display: none; }
+  }
+
 }
 
 @layer utilities {

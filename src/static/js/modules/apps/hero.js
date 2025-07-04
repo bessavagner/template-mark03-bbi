@@ -32,7 +32,7 @@ export class AppHero extends Component {
     super(
       "div",
       "hero-content w-10/12 md:w-full max-w-full relative text-center " +
-        "mt-30 md:mt-0 mx-auto px-4 sm:px-6 lg:px-8 z-10"
+        "mt-30 md:mt-20 mx-auto px-4 sm:px-6 lg:px-8 z-10"
     );
   }
 
@@ -84,9 +84,9 @@ export class AppHero extends Component {
       )
       .render({ target: wrapper.element });
     // subtítulo
-    new Component("p", "text-md sm:text-lg md:text-xl roboto-flex-400")
-      .setText("Treinos variados, desafiadores e adaptáveis.")
-      .render({ target: wrapper.element });
+    // new Component("p", "text-md sm:text-lg md:text-xl roboto-flex-400")
+    //   .setText("Treinos variados, desafiadores e adaptáveis.")
+    //   .render({ target: wrapper.element });
     const cta = new Component(
       "p",
       "text-lg sm:text-xl md:text-2xl barlow-condensed-semibold mb-10"
@@ -95,7 +95,7 @@ export class AppHero extends Component {
     cta.render({ target: form.element });
     form.renderContent();
     form.removeClass("bg-base-300");
-    form.addClassList("bg-base-100/60");
+    form.addClassList("bg-base-300/80 mb-10");
     form.fields["submitButton"].addClassList("mt-10");
     form.fields["submitButton"].removeClass("self-end");
     form.render({ target: wrapper.element });
