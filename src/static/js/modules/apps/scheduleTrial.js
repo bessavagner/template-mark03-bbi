@@ -8,12 +8,22 @@ import {
   FieldsContainer,
 } from "../components/fields.js";
 
-class ScheduleForm extends Form {
+export class ScheduleForm extends Form {
+  /**
+   * @param {string | string[] | null} classList
+   * @description Cria um formulário para agendamento de treinos experimentais.
+   *  - Campos: Nome, E-mail, Telefone, Data, Horário
+   *  - Validação: Todos os campos são obrigatórios.
+   *  - Envio: POST para "/schedule-trial" com JSON contendo os dados
+   *  - Resposta: Espera um JSON com uma chave "popup" para exibir um popup
+   */
   constructor(classList = null) {
     super(
       classList ||
-        "flex flex-col items-center w-full bg-base-300 shadow-lg rounded-lg p-6"
+        "flex flex-col items-center w-full bg-base-300 shadow-xl rounded-lg p-6"
     );
+  }
+  renderContent() {
     this.addField(
       "nomeSobrenome",
       LabeledInput,
@@ -149,6 +159,7 @@ class ScheduleForm extends Form {
         attributes: { type: "submit" },
       }
     );
+    return super.renderContent();
   }
   getFormData() {
     const data = super.getFormData();

@@ -1,5 +1,6 @@
 // @ts-check
 import { Component } from "../engine/core.js";
+import { ScheduleForm } from "./scheduleTrial.js";
 
 /** Botão-link que abre o modal de agendamento */
 export class ContactLink extends Component {
@@ -35,43 +36,6 @@ export class AppHero extends Component {
     );
   }
 
-  /** Construção da coluna vazia usada só para alinhamento à direita */
-  _buildLeftPlaceholder() {
-    return new Component("div", "hidden md:flex w-1/2");
-  }
-
-  /** Coluna com título, parágrafo e CTA */
-  _buildContent(buttonTargetId = "contact") {
-    const wrapper = new Component(
-      "div",
-      "w-full md:w-1/2 max-w-2xl mx-auto space-y-6"
-    );
-
-    // título
-    new Component(
-      "h1",
-      "text-4xl sm:text-5xl md:text-6xl barlow-condensed-semibold leading-tight"
-    )
-      .setContent(
-        'Pronto para o seu <span class="text-primary">Cross Training</span> em Crateús?'
-      )
-      .render({ target: wrapper.element });
-
-    // subtítulo
-    new Component("p", "text-lg sm:text-xl md:text-2xl roboto-flex-400")
-      .setText(
-        "Treinos variados, desafiadores e 100% adaptados ao seu nível de condicionamento."
-      )
-      .render({ target: wrapper.element });
-
-    // botão/anchor
-    const cta = new ContactLink();
-    cta.render({ target: wrapper.element });
-    cta.init(buttonTargetId);
-
-    return wrapper;
-  }
-
   /** Monta o DOM interno */
   renderContent(options = {}) {
     const buttonTargetId = options.buttonTargetId || "contact";
@@ -97,5 +61,45 @@ export class AppHero extends Component {
     });
     this.renderContent(buttonTargetId);
     return this;
+  }
+  /** Construção da coluna vazia usada só para alinhamento à direita */
+  _buildLeftPlaceholder() {
+    return new Component("div", "hidden md:flex w-1/2");
+  }
+
+  /** Coluna com título, parágrafo e CTA */
+  _buildContent(buttonTargetId = "contact") {
+    const wrapper = new Component(
+      "div",
+      "w-full md:w-1/2 max-w-2xl mx-auto space-y-6"
+    );
+
+    // título
+    new Component(
+      "h1",
+      "text-4xl sm:text-5xl md:text-6xl barlow-condensed-semibold leading-tight"
+    )
+      .setContent(
+        'O seu box de <span class="text-primary">Cross Training</span> em Crateús'
+      )
+      .render({ target: wrapper.element });
+    // subtítulo
+    new Component("p", "text-md sm:text-lg md:text-xl roboto-flex-400")
+      .setText("Treinos variados, desafiadores e adaptáveis.")
+      .render({ target: wrapper.element });
+    const cta = new Component(
+      "p",
+      "text-lg sm:text-xl md:text-2xl barlow-condensed-semibold mb-10"
+    ).setText("AGENDE AGORA SEU TREINO EXPERIMENTAL!");
+    const form = new ScheduleForm();
+    cta.render({ target: form.element });
+    form.renderContent();
+    form.removeClass("bg-base-300");
+    form.addClassList("bg-base-100/60");
+    form.fields["submitButton"].addClassList("mt-10");
+    form.fields["submitButton"].removeClass("self-end");
+    form.render({ target: wrapper.element });
+
+    return wrapper;
   }
 }
