@@ -1,6 +1,7 @@
 // @ts-check
 import { Component } from "../engine/core.js";
 import { Card } from "../components/display.js";
+import { Anchor } from "../components/actions.js";
 import { coachesData } from "./data/coachesData.js";
 
 export class CoachCard extends Card {
@@ -116,47 +117,59 @@ export class CoachCard2 extends Component {
  * • Vídeo à esquerda
  * • Dois CoachCards à direita
  */
-export class CoachesSection extends Component {
+export class AppStaff extends Component {
   constructor() {
-    super("section",
-      "py-16 bg-base-100 text-base-content"
-    );
-    this.setId("team-coaches");
+    super("section", "flex flex-col items-center justify-center py-20 bg-base-100 text-base-content");
   }
-  renderContent(options = {}) {
 
-    const videoSrc = options.videoSrc || "/static/videos/video-institucional-1.mp4";
-    // container 2-colunas
-    const grid = new Component("div",
-      "container mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-8 items-start"
+  /** Renderiza grid de CoachCards */
+  renderContent() {
+    // Título
+    new Component("h2",
+      "text-center text-3xl md:text-4xl font-heading barlow-condensed-semibold mb-12")
+      .setText("Nossa Equipe")
+      .render({ target: this.element });
+
+    // Wrapper do grid
+    const grid = new Component(
+      "div",
+      "md:max-w-3xl mx-auto px-4 grid gap-8 " +
+      "grid-cols-1 md:grid-cols-2 justify-items-center"
     ).render({ target: this.element });
 
-    // ► vídeo à esquerda
-    new Component("div", "video-wrapper shadow-neon").render({ target: grid.element });
-    new Component("video")
-      .setAttributes({
-        src: videoSrc,
-        controls: "",
-        autoplay: "",
-        muted: "",
-        loop: "",
-        class: "w-full h-auto rounded-lg shadow-lg"
-      })
-      .render({ target: grid.element.querySelector(".video-wrapper") });
-
-    // ► cards à direita
-    const cardsWrapper = new Component("div",
-      "flex flex-row justify-around my-auto"
-    ).render({ target: grid.element });
-
-    coachesData.forEach(coach =>
-      new CoachCard().renderContent(coach).render({ target: cardsWrapper.element })
+    // Renderizar cada coach
+    coachesData.forEach((coach) =>
+      new CoachCard().renderContent(coach).render({ target: grid.element })
     );
-    return this;
+
+    // CTA final
+    new Component("p", "text-center mt-12 text-3xl roboto-flex-400")
+      .setText(
+        'Pronto para treinar com elas?'
+      )
+      .render({ target: this.element });
+    
+    new Anchor({
+      targetBlank: false,
+      classList:
+        "btn btn-accent w-64 text-lg px-6 py-3 mt-8 rounded-full shadow-neon-accent hover:btn-success hover:shadow-neon-success transition-all duration-300 ",
+    })
+      .renderContent({
+        text: "Agendar Aula",
+        onClick: (e) => {
+          e.preventDefault();
+          document
+            .getElementById("contact")
+            ?.scrollIntoView({ behavior: "smooth" });
+        },
+      })
+      .setText("Agendar Aula")
+      .render({ target: this.element });
+
   }
-  init(target, options = {}) {
-    this.render({ target: target });
-    // renderiza o conteúdo interno
-    this.renderContent(options);
+
+  init(target) {
+    this.render({ target });
+    this.renderContent();
   }
 }
