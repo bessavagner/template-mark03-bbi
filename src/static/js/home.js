@@ -1,7 +1,7 @@
 //@ts-check
 
 import { AppHero } from "./modules/apps/hero.js";
-import { AppDifferentials } from "./modules/apps/diferentials.js";
+import { AppDifferentials } from "./modules/apps/differentials.js";
 import { TestimonyCarousel } from "./modules/apps/testimony.js";
 import { CoachesSection } from "./modules/apps/coaches.js";
 import { AppLocationContact } from "./modules/apps/locationContact.js";
