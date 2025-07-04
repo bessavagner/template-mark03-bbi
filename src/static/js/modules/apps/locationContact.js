@@ -3,6 +3,7 @@
 import { Component } from "../engine/core.js";
 import { Anchor } from "../components/actions.js";
 import { instagramPrimaryContent, whatsappPrimaryContent } from "../svg.js";
+import { locationContactData } from "./data/locationcontactData.js";
 
 export class GoogleMapsMarker extends Component {
   constructor() {
@@ -47,14 +48,8 @@ export class GoogleMapsMap extends Component {
  * Seção Localização & Contato.
  */
 export class AppLocationContact extends Component {
-  /**
-   * @param {{ address:string, mapsUrl:string,
-   *           whatsappUrl:string, instagramUrl?:string,
-   *           staticMapUrl:string, scheduleTargetId?:string }} opts
-   */
-  constructor(opts) {
+  constructor() {
     super("div", "py-20 w-full");
-    this.opts = { scheduleTargetId: "contact", ...opts };
   }
 
   /** Monta o DOM interno */
@@ -73,7 +68,7 @@ export class AppLocationContact extends Component {
 
   /** Inicializa */
   init(target) {
-    this.render({ target });
+    this.render({ target: target });
     this.renderContent();
   }
 
@@ -114,7 +109,7 @@ export class AppLocationContact extends Component {
       .render({ target: wrapper.element });
 
     new Component("p", "text-xl roboto-flex-400")
-      .setText(this.opts.address)
+      .setText(locationContactData.address)
       .render({ target: wrapper.element });
 
     // Botões
@@ -124,20 +119,17 @@ export class AppLocationContact extends Component {
     ).render({ target: wrapper.element });
 
     // WhatsApp
-    new Anchor({ href: this.opts.whatsappUrl })
+    new Anchor({ href: locationContactData.whatsappUrl })
       .setContent(whatsappPrimaryContent)
       .render({ target: btnGroup.element });
 
-    // Instagram opcional
-    if (this.opts.instagramUrl) {
-      new Component("a", "my-auto")
-        .setAttributes({
-          target: "_blank",
-          href: this.opts.instagramUrl,
-        })
-        .setContent(instagramPrimaryContent)
-        .render({ target: btnGroup.element });
-    }
+    new Component("a", "my-auto")
+      .setAttributes({
+        target: "_blank",
+        href: locationContactData.instagramUrl,
+      })
+      .setContent(instagramPrimaryContent)
+      .render({ target: btnGroup.element });
 
     // Agendar aula (scroll para #contact)
     new Anchor({
@@ -150,7 +142,7 @@ export class AppLocationContact extends Component {
         onClick: (e) => {
           e.preventDefault();
           document
-            .getElementById(this.opts.scheduleTargetId)
+            .getElementById(locationContactData.buttonTargetId)
             ?.scrollIntoView({ behavior: "smooth" });
         },
       })
