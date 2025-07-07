@@ -95,7 +95,7 @@ export class AppHero extends Component {
     cta.render({ target: form.element });
     form.renderContent();
     form.removeClass("bg-base-300");
-    form.addClassList("bg-base-300/80 mb-10");
+    form.addClassList("bg-base-300/85 mb-10");
     form.fields["submitButton"].addClassList("mt-10");
     form.fields["submitButton"].removeClass("self-end");
     form.render({ target: wrapper.element });

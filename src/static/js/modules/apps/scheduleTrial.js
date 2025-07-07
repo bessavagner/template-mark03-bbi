@@ -20,7 +20,7 @@ export class ScheduleForm extends Form {
   constructor(classList = null) {
     super(
       classList ||
-        "flex flex-col items-center w-full bg-base-300 shadow-xl rounded-lg p-6"
+        "flex flex-col items-center w-full bg-base-300 shadow-xl rounded-xl p-8"
     );
   }
   renderContent() {
