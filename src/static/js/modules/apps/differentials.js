@@ -23,14 +23,14 @@ export class AppDifferentials extends Component {
     super(
       "section",
       "h-full bg-primary text-primary-content flex flex-col items-center " +
-        "justify-center py-8 sm:py-12 px-6 space-y-6"
+        "justify-center py-8 mm:py-12 px-6 space-y-10"
     );
   }
 
   _buildList() {
     const ul = new Component(
       "ul",
-      "flex flex-col md:flex-row justify-center items-center gap-8"
+      "flex flex-col md:flex-row justify-around md:justify-center items-center gap-12 md:gap-8"
     );
 
     DIFFERENTIALS.forEach(({ title, desc }, idx) => {

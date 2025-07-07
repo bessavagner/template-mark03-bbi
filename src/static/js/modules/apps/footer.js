@@ -28,7 +28,7 @@ export class AppFooter extends Component {
 
         const menu = new Component("ul", "flex space-x-4");
         links.forEach((item) => {
-            new AnchorToSection()
+            new AnchorToSection({})
             .renderContent(item)
             .setStyle({
                 cursor: "pointer",
