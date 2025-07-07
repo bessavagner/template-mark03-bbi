@@ -30,9 +30,15 @@ document.addEventListener("DOMContentLoaded", () => {
   LazyMount.observe("testimonials-section", () => {
       appTestimony.init("#app-testimonials");
   })
-  new AppGallery().init("#app-galery", { images: galleryImages });
-  new AppStaff().init("#app-coaches");
-  new AppLocationContact().init("#app-location-contact");
+  LazyMount.observe("gallery-section", () => {
+    new AppGallery().init("#app-galery", { images: galleryImages });
+  });
+  LazyMount.observe("location-contact-section", () => {
+    new AppLocationContact().init("#app-location-contact");
+  });
+  LazyMount.observe("coaches-section", () => {
+    new AppStaff().init("#app-coaches");
+  });
   new ScheduleFormApp().init("#app-contact");
   new AppFooter().init("#app-footer");
 

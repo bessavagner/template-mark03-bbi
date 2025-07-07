@@ -135,29 +135,34 @@ export class AppGallery extends Component {
     this.addComponent(
       new Component(
         "h2",
-        "barlow-condensed-bold text-2xl md:text-3xl text-center text-primary mb-8"
+        "barlow-condensed-bold text-2xl md:text-3xl text-center text-primary mb-8 " +
+          "opacity-0 animate-fade-in-up"
       ).setText("Conheça nosso Box")
     );
 
+    const carouselWrapper = new Component(
+      "div",
+      "opacity-0 animate-fade-in-up delay-[300ms] w-full"
+    );
     const carousel = new GalleryCarousel({ images });
-    carousel.init(this.element);
+    carousel.init(carouselWrapper.element);
+    this.append(carouselWrapper);
 
     this.addComponent(
       new Component(
         "p",
-        "text-md md:text-lg opacity-80 mt-16 mb-8 text-center max-w-xl"
+        "text-md md:text-lg opacity-0 animate-fade-in-up delay-[600ms] mt-16 mb-8 text-center max-w-xl"
       ).setText("Para mais, siga nosso Instagram!")
     );
 
-
     this.addComponent(
-      new Component("a", "my-auto")
+      new Component("a", "opacity-0 animate-fade-in-up delay-[800ms] my-auto")
         .setAttributes({
           target: "_blank",
           href: locationContactData.instagramUrl,
         })
         .setContent(instagramPrimaryContent)
-        .addClassList("max-w-fit animate-pulse")
+        .addClassList("max-w-fit")
     );
   }
 }
