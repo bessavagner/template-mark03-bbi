@@ -181,3 +181,158 @@ export class Circle extends Component {
     return this;
   }
 }
+
+/**
+ * Componente base genérico para carrosséis.
+ *
+ * ▸ Construtor: recebe apenas `classList` e opções estritamente
+ *   necessárias (intervalo, quantidade de itens visíveis etc.).
+ * ▸ renderContent(): gera/atualiza slides chamando _buildSlide().
+ * ▸ Métodos de navegação (next, prev, goTo) + autoplay (start / stop).
+ * ▸ Sub-classes só precisam sobrescrever _buildSlide() e,
+ *   opcionalmente, updateVisuals().
+ */
+export class CarouselBase extends Component {
+  /**
+   * @param {{
+   *   classList?: Array<string>|string|null,
+   *   interval?: number,
+   *   visibleCount?: number
+   * }} [opts]
+   */
+  constructor({ classList = null, interval = 5000, visibleCount = 1 } = {}) {
+    super("div", ["relative", "overflow-hidden"]);
+    if (classList) {
+      this.addClassList(classList);
+    }
+
+    /**  @type {Component} */
+    this.track = new Component("div", "flex h-full transition-transform duration-500 ease-in-out");
+    this.addComponent(this.track);
+
+    /** @protected @type {Component[]} */
+    this.slides = [];
+
+    /** @protected */ this.currentIndex = 0;
+    /** @protected */ this.interval = interval;
+    /** @protected */ this.visibleCount = visibleCount;
+    /** @private */  this._timer = undefined;
+  }
+
+  /**
+   * Renderiza ou atualiza o carrossel.
+   * @param {{ items?: any[] }} [options]
+   *   ➜ Cada item é passado para _buildSlide().
+   */
+  renderContent({ items = [] } = {}) {
+    // Se já existiam slides, remove-os antes de redesenhar
+    if (this.slides.length) {
+      this.slides.forEach(slide => slide.remove());
+      this.slides = [];
+    }
+
+    items.forEach(itemData => {
+      const slide = this._buildSlide(itemData);
+      this.slides.push(slide);
+      this.track.addComponent(slide);
+    });
+
+    this.track.setStyle({
+      width: `${this.slides.length * 100}%`,
+      display: "flex",
+    });
+    this.slides.forEach(slide => {
+      slide.setStyle({
+        width: `${100 / this.slides.length}%`,
+        flexShrink: "0",
+      });
+    });
+
+    this.updateVisuals();
+    return this;
+  }
+
+  /* ======================================================================
+   * › SUB-COMPONENT BUILDERS
+   * ====================================================================*/
+
+  /**
+   * Constrói um slide a partir dos dados fornecidos.
+   * - Sub-classes DEVEM sobrescrever para montar slides específicos.
+   * @protected
+   * @param {any} itemData
+   * @returns {Component}
+   */
+  _buildSlide(itemData) {
+    // Placeholder genérico – evita erro se sub-classe esquecer de implementar
+    return new Component("div", "flex-1 p-4").setText(JSON.stringify(itemData));
+  }
+
+  /* ======================================================================
+   * › NAVEGAÇÃO / AUTOPLAY
+   * ====================================================================*/
+
+  next() {
+    this.goTo(this.currentIndex + 1);
+  }
+
+  prev() {
+    this.goTo(this.currentIndex - 1);
+  }
+
+  /**
+   * Move para o índice desejado, com wrap-around.
+   * @param {number} index
+   */
+  goTo(index) {
+    const len = this.slides.length;
+    if (!len) return;
+
+    this.currentIndex = (index + len) % len;
+    this.updateVisuals();
+  }
+
+  /**
+   * Atualiza CSS do track para mostrar o slide corrente.
+   * Sub-classes podem sobrescrever para efeitos 3-D, escalas etc.
+   * @protected
+   */
+  updateVisuals() {
+    const translatePct = -(100 / this.visibleCount) * this.currentIndex;
+    this.track.setStyle({ transform: `translateX(${translatePct}%)` });
+  }
+
+  /* ======================================================================
+   * › CICLO DE VIDA / BEHAVIOUR
+   * ====================================================================*/
+
+  /**
+   * Monta o componente no DOM e inicia autoplay (se houver).
+   * @param {HTMLElement|string|Component} target
+   */
+  init(target) {
+    this.render({ target });
+    this.start();
+  }
+
+  /** Inicia autoplay. */
+  start() {
+    this.stop(); // garante que não existam timers duplicados
+    if (this.interval > 0) {
+      this._timer = setInterval(() => this.next(), this.interval);
+    }
+  }
+
+  /** Pausa autoplay. */
+  stop() {
+    if (this._timer) {
+      clearInterval(this._timer);
+      this._timer = undefined;
+    }
+  }
+
+  /** Limpa timer ao remover do DOM. */
+  beforeUnmount() {
+    this.stop();
+  }
+}
