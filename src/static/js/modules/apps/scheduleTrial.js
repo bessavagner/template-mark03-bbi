@@ -47,7 +47,7 @@ export class ScheduleForm extends Form {
       "emailTelefone",
       new FieldsContainer({
         tagName: "div",
-        classList: "grid grid-cols-2 gap-4 w-full my-2",
+        classList: "grid grid-cols-1 md:grid-cols-2 gap-4 w-full my-2",
       })
         .addField(
           "email",
