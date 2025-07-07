@@ -152,7 +152,7 @@ export class ScheduleForm extends Form {
       Button,
       {
         classList:
-          "btn btn-primary w-64 self-end text-lg font-bold mt-4 shadow-neon hover:btn-success hover:shadow-neon-success",
+          "btn btn-primary w-64 self-center md:self-end text-lg font-bold mt-4 shadow-neon hover:btn-success hover:shadow-neon-success",
       },
       {
         text: "Agendar",
