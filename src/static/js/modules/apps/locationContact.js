@@ -49,7 +49,7 @@ export class GoogleMapsMap extends Component {
  */
 export class AppLocationContact extends Component {
   constructor() {
-    super("div", "py-20 w-full");
+    super("div", "md:py-20 w-full");
   }
 
   /** Monta o DOM interno */
@@ -57,7 +57,7 @@ export class AppLocationContact extends Component {
     // container responsivo 2-colunas
     const container = new Component(
       "div",
-      "container mx-auto px-6 grid grid-cols-1 md:grid-cols-2 justify-center items-center gap-4"
+      "container mx-auto px-6 flex flex-col-reverse md:grid md:grid-cols-2 justify-center items-center gap-4"
     ).render({ target: this.element });
 
     this._buildMap().render({ target: container.element });
@@ -76,7 +76,7 @@ export class AppLocationContact extends Component {
   _buildMap() {
     const container = new Component(
       "div",
-      "w-96 h-96 max-w-1/2 mx-auto md:mr-0"
+      "w-10/12 md:w-96 h-96 md:max-w-1/2 mx-auto md:mr-0"
     );
     new GoogleMapsMap()
       .addMarker({
@@ -97,7 +97,7 @@ export class AppLocationContact extends Component {
   _buildInfo() {
     const wrapper = new Component(
       "div",
-      "flex flex-col space-y-10 w-96 max-w-1/2 text-center md:text-left p-8 md:ml-0"
+      "flex flex-col space-y-5 md:space-y-10 w-10/12 md:w-96 md:max-w-1/2 text-center md:text-left p-8 md:ml-0"
     );
 
     // Endereço
@@ -115,12 +115,13 @@ export class AppLocationContact extends Component {
     // Botões
     const btnGroup = new Component(
       "div",
-      "flex flex-col md:flex-row gap-4 mt-4 text-primary-content"
+      "flex flex-wrap md:flex-row justify-center md:justify-start gap-4 mt-4 text-primary-content"
     ).render({ target: wrapper.element });
 
     // WhatsApp
     new Anchor({ href: locationContactData.whatsappUrl })
       .setContent(whatsappPrimaryContent)
+      .addClassList("max-w-fit")
       .render({ target: btnGroup.element });
 
     new Component("a", "my-auto")
@@ -129,6 +130,7 @@ export class AppLocationContact extends Component {
         href: locationContactData.instagramUrl,
       })
       .setContent(instagramPrimaryContent)
+      .addClassList("max-w-fit")
       .render({ target: btnGroup.element });
 
     // Agendar aula (scroll para #contact)
