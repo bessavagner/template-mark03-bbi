@@ -9,7 +9,7 @@ export class CoachCard extends Card {
     super("card w-72 bg-base-300 rounded-lg shadow-md " +
       "transition-transform duration-300 hover:shadow-neon hover:scale-110"
     );
-    this.body.addClassList("card-body flex flex-col items-center text-center p-6 space-y-4");
+    this.body.addClassList("card-body flex flex-col items-center text-center p-6 md:space-y-4");
   }
   renderContent(options = {}) {
     const { name = "", title = "", image = "", credentials = [] } = options;
@@ -119,16 +119,11 @@ export class CoachCard2 extends Component {
  */
 export class AppStaff extends Component {
   constructor() {
-    super("section", "flex flex-col items-center justify-center py-20 bg-base-100 text-base-content");
+    super("section", "flex flex-col items-center justify-center py-2 md:py-20 bg-base-100 text-base-content");
   }
 
   /** Renderiza grid de CoachCards */
   renderContent() {
-    // Título
-    new Component("h2",
-      "text-center text-3xl md:text-4xl font-heading barlow-condensed-semibold mb-12")
-      .setText("Nossa Equipe")
-      .render({ target: this.element });
 
     // Wrapper do grid
     const grid = new Component(
@@ -143,9 +138,9 @@ export class AppStaff extends Component {
     );
 
     // CTA final
-    new Component("p", "text-center mt-12 text-3xl roboto-flex-400")
+    new Component("p", "text-center mt-12 text-md md:text-3xl roboto-flex-400")
       .setText(
-        'Pronto para treinar com elas?'
+        'Seu progresso é nossa dedicação.'
       )
       .render({ target: this.element });
     
@@ -163,7 +158,6 @@ export class AppStaff extends Component {
             ?.scrollIntoView({ behavior: "smooth" });
         },
       })
-      .setText("Agendar Aula")
       .render({ target: this.element });
 
   }
