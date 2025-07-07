@@ -129,7 +129,7 @@ export class AppStaff extends Component {
     const grid = new Component(
       "div",
       "md:max-w-3xl mx-auto px-4 grid gap-8 " +
-      "grid-cols-1 md:grid-cols-2 justify-items-center"
+      "grid-cols-1 md:grid-cols-2 justify-items-center opacity-0 animate-fade-in-up"
     ).render({ target: this.element });
 
     // Renderizar cada coach
@@ -138,7 +138,7 @@ export class AppStaff extends Component {
     );
 
     // CTA final
-    new Component("p", "text-center mt-12 text-md md:text-3xl roboto-flex-400")
+    new Component("p", "text-center mt-12 text-md md:text-3xl roboto-flex-400 opacity-0 animate-fade-in-up delay-[300ms]")
       .setText(
         'Seu progresso é nossa dedicação.'
       )
@@ -147,7 +147,7 @@ export class AppStaff extends Component {
     new Anchor({
       targetBlank: false,
       classList:
-        "btn btn-accent w-64 text-lg px-6 py-3 mt-8 rounded-full shadow-neon-accent hover:btn-success hover:shadow-neon-success transition-all duration-300 ",
+        "btn btn-accent w-64 text-lg px-6 py-3 mt-8 rounded-full shadow-neon-accent hover:btn-success hover:shadow-neon-success transition-all duration-300 opacity-0 animate-fade-in-up delay-[600ms] ",
     })
       .renderContent({
         text: "Agendar Aula",
