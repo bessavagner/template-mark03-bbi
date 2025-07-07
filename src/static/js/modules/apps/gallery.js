@@ -1,5 +1,8 @@
-import { Component } from "../engine/core.js";
 import { Anchor } from "../components/actions.js";
+import { locationContactData } from "./data/locationcontactData.js";
+import { instagramPrimaryContent } from "../svg.js";
+
+import { Component } from "../engine/core.js";
 
 /* Slide individual */
 class GallerySlide extends Component {
@@ -143,16 +146,18 @@ export class AppGallery extends Component {
       new Component(
         "p",
         "text-md md:text-lg opacity-80 mt-16 mb-8 text-center max-w-xl"
-      ).setText("Veja mais fotos e bastidores no nosso Instagram!")
+      ).setText("Para mais, siga nosso Instagram!")
     );
 
+
     this.addComponent(
-      new Anchor({
-        href: "https://instagram.com/boxbaseinicial",
-        targetBlank: true,
-        classList:
-          "btn btn-accent w-64 text-lg px-6 py-3 mt-8 md:mt-0 rounded-full shadow-neon-accent hover:btn-success hover:shadow-neon-success",
-      }).renderContent({ text: "Seguir no Instagram" })
+      new Component("a", "my-auto")
+        .setAttributes({
+          target: "_blank",
+          href: locationContactData.instagramUrl,
+        })
+        .setContent(instagramPrimaryContent)
+        .addClassList("max-w-fit animate-pulse")
     );
   }
 }
