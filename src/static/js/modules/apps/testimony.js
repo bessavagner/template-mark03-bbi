@@ -195,9 +195,9 @@ export class AppTestimony extends Component {
     )
     this.carousel.addClass("mt-10")
     this.carousel.init(this.element);
-    new Component("div", "flex flex-col w-1/2 h-full items-center justify-evenly mt-8 space-y-4 mx-auto")
+    new Component("div", "flex flex-col md:w-1/2 h-full items-center justify-evenly mt-8 space-y-4 mx-auto")
       .addComponent(
-        new Component("p", "text-xl opacity-80 mt-2")
+        new Component("p", "text-md md:text-xl opacity-80 mt-2")
           .setText("Mais de 80% de agendados se tornam alunos")
         )
       .addComponent(
