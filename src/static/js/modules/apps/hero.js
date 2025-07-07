@@ -67,39 +67,40 @@ export class AppHero extends Component {
     return new Component("div", "hidden md:flex w-1/2");
   }
 
-  /** Coluna com título, parágrafo e CTA */
-  _buildContent(buttonTargetId = "contact") {
-    const wrapper = new Component(
-      "div",
-      "w-full md:w-1/2 max-w-2xl mx-auto space-y-6"
-    );
+/** Coluna com título, parágrafo e CTA */
+_buildContent(buttonTargetId = "contact") {
+  const wrapper = new Component(
+    "div",
+    "w-full md:w-1/2 max-w-2xl mx-auto space-y-6"
+  );
 
-    // título
-    new Component(
-      "h1",
-      "text-4xl sm:text-5xl md:text-6xl barlow-condensed-semibold leading-tight"
-    )
-      .setContent(
-        'O seu box de <span class="text-primary">Cross Training</span> em Crateús'
-      )
-      .render({ target: wrapper.element });
-    // subtítulo
-    // new Component("p", "text-md sm:text-lg md:text-xl roboto-flex-400")
-    //   .setText("Treinos variados, desafiadores e adaptáveis.")
-    //   .render({ target: wrapper.element });
-    const cta = new Component(
-      "p",
-      "text-lg sm:text-xl md:text-2xl barlow-condensed-semibold mb-10"
-    ).setText("AGENDE AGORA SEU TREINO EXPERIMENTAL!");
-    const form = new ScheduleForm();
-    cta.render({ target: form.element });
-    form.renderContent();
-    form.removeClass("bg-base-300");
-    form.addClassList("bg-base-300/85 mb-10");
-    form.fields["submitButton"].addClassList("mt-10");
-    form.fields["submitButton"].removeClass("self-end");
-    form.render({ target: wrapper.element });
+  // Título animado
+  new Component(
+    "h1",
+    "text-4xl sm:text-5xl md:text-6xl barlow-condensed-semibold leading-tight opacity-0 animate-fade-in-up"
+  )
+    .setContent('O seu box de <span class="text-primary">Cross Training</span> em Crateús')
+    .render({ target: wrapper.element });
 
-    return wrapper;
-  }
+  // Subtítulo animado
+  const cta = new Component(
+    "p",
+    "text-lg sm:text-xl md:text-2xl barlow-condensed-semibold mb-10 opacity-0 animate-slide-up delay-[150ms]"
+  ).setText("AGENDE AGORA SEU TREINO EXPERIMENTAL!");
+  
+  const form = new ScheduleForm();
+  cta.render({ target: form.element });
+
+  // Form animado
+  form.renderContent();
+  form.removeClass("bg-base-300");
+  form.addClassList("bg-base-300/85 mb-10 opacity-0 animate-grow-in delay-[300ms]");
+  form.fields["submitButton"].addClassList("mt-10");
+  form.fields["submitButton"].removeClass("self-end");
+
+  form.render({ target: wrapper.element });
+
+  return wrapper;
+}
+
 }

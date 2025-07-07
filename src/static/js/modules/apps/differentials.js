@@ -51,12 +51,20 @@ export class AppDifferentials extends Component {
       new Component("span", "text-md opacity-80 mt-1")
         .setText(desc)
         .render({ target: li.element });
-
+      const delay = 400 + idx * 250; // começa em 400ms, depois 650ms, 900ms
+      li.addClassList([
+        "opacity-0",
+        "animate-fade-in-up",
+        `delay-[${delay}ms]`,
+      ]);
       li.render({ target: ul.element });
       if (idx < DIFFERENTIALS.length - 1) {
         ul.addComponent(
-          new Component("div", "h-[1px] w-48 bg-accent mt-4 rounded-full md:hidden my-0")
-        )
+          new Component(
+            "div",
+            "h-[1px] w-48 bg-accent mt-4 rounded-full md:hidden my-0"
+          )
+        );
       }
     });
     return ul;
@@ -69,6 +77,7 @@ export class AppDifferentials extends Component {
 
   init(target) {
     this.render({ target });
+    this.addClassList(["opacity-0", "animate-fade-in-up", "delay-[1200ms]"]);
     this.renderContent();
   }
 
