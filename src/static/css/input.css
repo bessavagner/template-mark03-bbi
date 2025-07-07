@@ -59,6 +59,14 @@
     overflow-x: hidden;
     @apply bg-base-200 text-base-content;
   }
+  html:not(.fonts-loaded) .animate-fade-in-up,
+  html:not(.fonts-loaded) .animate-slide-up,
+  html:not(.fonts-loaded) .animate-grow-in {
+    opacity: 0 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+
   section {
   }
   /* em input.css */
