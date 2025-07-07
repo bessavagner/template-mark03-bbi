@@ -29,9 +29,11 @@ export class TestimonyCard extends Card {
     this.state.active = false;
     this.setState({ name, role, quote, image });
     this.applyState();
-   
-    return super.renderContent({ header: headerContent, body: bodyContent });
-  
+
+    return super.renderContent({
+      header: headerContent,
+      body: bodyContent,
+    });
   }
   /** Aplica classes conforme active / inactive */
   applyState() {
@@ -55,7 +57,7 @@ export class TestimonyCard extends Card {
     const avatar = new Component(
       "div",
       "w-32 rounded-full ring-2 ring-offset-2 ring-primary border-primary shadow-neon ring-offset-base-100 overflow-hidden"
-    )
+    );
 
     new Component("img")
       .setAttributes({
@@ -69,29 +71,31 @@ export class TestimonyCard extends Card {
   }
   _buildBodyContent(options = {}) {
     const { name = "", role = "", quote = "", image = "" } = options;
-    
+
     const bodyContent = [];
 
-    const quoteComponent = new Component("p", "italic text-lg roboto-flex-400 mt-10")
+    const quoteComponent = new Component(
+      "p",
+      "italic text-lg roboto-flex-400 mt-10"
+    )
       .setText(`“${quote}”`)
       .render({ target: this.body.element });
 
     const nameComponent = new Component(
       "h3",
       "font-heading barlow-condensed-semibold text-xl text-primary"
-    )
-      .setText(name);
+    ).setText(name);
 
-      bodyContent.push(quoteComponent, nameComponent);
+    bodyContent.push(quoteComponent, nameComponent);
 
-      
-      if (role) {
-        const roleComponent = new Component("span", "text-sm opacity-70")
-        .setText(role);
-        bodyContent.push(roleComponent);
-      }
+    if (role) {
+      const roleComponent = new Component("span", "text-sm opacity-70").setText(
+        role
+      );
+      bodyContent.push(roleComponent);
+    }
 
-      return  bodyContent;
+    return bodyContent;
   }
 }
 
@@ -124,6 +128,19 @@ export class TestimonyCarousel extends Component {
   init(target) {
     this.render({ target });
     this.updateVisuals();
+    setTimeout(() => {
+      this.cards.forEach((card, idx) => {
+        if (
+          idx === this.currentIndex ||
+          idx === (this.currentIndex + 1) % this.cards.length ||
+          idx ===
+            (this.currentIndex - 1 + this.cards.length) % this.cards.length
+        ) {
+          card.removeClass("opacity-0");
+        }
+      });
+    }, 100);
+
     this.timer = setInterval(() => this.next(), this.interval);
   }
 
@@ -133,7 +150,8 @@ export class TestimonyCarousel extends Component {
   }
 
   prev() {
-    this.currentIndex = (this.currentIndex - 1 + this.cards.length) % this.cards.length;
+    this.currentIndex =
+      (this.currentIndex - 1 + this.cards.length) % this.cards.length;
     this.updateVisuals();
   }
 
@@ -184,22 +202,31 @@ export class TestimonyCarousel extends Component {
 
 export class AppTestimony extends Component {
   constructor() {
-    super("section", "flex flex-col items-center justify-center md:grid-cols-2 w-full gap-4");
+    super(
+      "section",
+      "flex flex-col items-center justify-center md:grid-cols-2 w-full gap-4"
+    );
     this.carousel = new TestimonyCarousel();
   }
 
   renderContent() {
     this.addComponent(
-      new Component("h2", "barlow-condensed-bold text-2xl md:text-3xl text-center text-primary")
-        .setText("O que nossos alunos dizem")
-    )
-    this.carousel.addClass("mt-10")
+      new Component(
+        "h2",
+        "barlow-condensed-bold text-2xl md:text-3xl text-center text-primary opacity-0 animate-fade-in-up"
+      ).setText("O que nossos alunos dizem")
+    );
+    this.carousel.addClassList("mt-10 opacity-0 animate-fade-in-up delay[200ms]");
     this.carousel.init(this.element);
-    new Component("div", "flex flex-col md:w-1/2 h-full items-center justify-evenly mt-8 space-y-4 mx-auto")
+    new Component(
+      "div",
+      "flex flex-col md:w-1/2 h-full items-center justify-evenly mt-8 space-y-4 mx-auto"
+    )
       .addComponent(
-        new Component("p", "text-md md:text-xl opacity-80 mt-2")
-          .setText("Mais de 80% de agendados se tornam alunos")
+        new Component("p", "text-md md:text-xl opacity-80 mt-2").setText(
+          "Mais de 80% de agendados se tornam alunos"
         )
+      )
       .addComponent(
         new Anchor({
           targetBlank: false,

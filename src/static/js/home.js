@@ -12,6 +12,7 @@ import { AppNav } from "./modules/apps/nav.js";
 
 import { AnchorToSection } from "./modules/components/actions.js";
 import { calendarSmall } from "./modules/svg.js";
+import { LazyMount } from "./modules/utils/lazyMount.js";
 import { Component } from "./modules/engine/core.js";
 
 const galleryImages = [
@@ -25,7 +26,10 @@ document.addEventListener("DOMContentLoaded", () => {
   new AppNav().init("#app-navbar");
   new AppHero().init("#app-hero", { buttonTargetId: "contact" });
   new AppDifferentials().init("#app-differentials");
-  new AppTestimony().init("#app-testimonials");
+  const appTestimony = new AppTestimony();
+  LazyMount.observe("testimonials-section", () => {
+      appTestimony.init("#app-testimonials");
+  })
   new AppGallery().init("#app-galery", { images: galleryImages });
   new AppStaff().init("#app-coaches");
   new AppLocationContact().init("#app-location-contact");
