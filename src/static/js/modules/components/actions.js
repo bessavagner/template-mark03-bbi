@@ -71,8 +71,14 @@ export class Anchor extends Component {
 }
 
 export class AnchorToSection extends Anchor {
-  constructor() {
-    super({targetBlank: false, classList: "text-gray-500 hover:text-primary" });
+  /**
+   * @param {{ classList?: string | string[] | null }} options
+   */
+  constructor({classList = null}) {
+    if (!classList) {
+      classList = "text-gray-500 hover:text-primary";
+    }
+    super({targetBlank: false, classList: classList });
   }
   renderContent(options = {}) {
     const sectionTargetId = options?.sectionTargetId;

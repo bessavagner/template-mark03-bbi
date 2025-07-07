@@ -304,6 +304,25 @@ export class Component {
     return this;
   }
   /**
+   * Adds multiple components to the component's element.
+   * @param {Array<Component>} components - An array of Component instances to add.
+   * @param {RenderOptions} [options={}] - Options for rendering the components.
+   * @throws {TypeError} If components is not an array or if any component is not an instance of Component class.
+   * @returns {Component} This Component instance for chaining.
+   */
+  addComponents(components, options = {}) {
+    if (!Array.isArray(components)) {
+      throw new TypeError("components must be an array of Component instances.");
+    }
+    components.forEach((component) => {
+      if (!(component instanceof Component)) {
+        throw new TypeError("Each component must be an instance of Component class.");
+      }
+      this.addComponent(component, options);
+    });
+    return this;
+  }
+  /**
    * Renders the component into another element.
    * @param {RenderOptions} options - Options for rendering the component.
    * @returns {this} This Component instance for chaining.
