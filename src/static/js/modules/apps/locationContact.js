@@ -76,7 +76,7 @@ export class AppLocationContact extends Component {
   _buildMap() {
     const container = new Component(
       "div",
-      "w-10/12 md:w-96 h-96 md:max-w-1/2 mx-auto md:mr-0"
+      "w-10/12 md:w-96 h-96 md:max-w-1/2 mx-auto md:mr-0 animate-fade-in-up delay-[800ms]"
     );
     new GoogleMapsMap()
       .addMarker({
@@ -103,19 +103,19 @@ export class AppLocationContact extends Component {
     // Endereço
     new Component(
       "h2",
-      "text-3xl md:text-5xl font-heading barlow-condensed-semibold"
+      "text-3xl md:text-5xl font-heading barlow-condensed-semibold opacity-0 animate-fade-in-up"
     )
       .setText("Como chegar")
       .render({ target: wrapper.element });
 
-    new Component("p", "text-xl roboto-flex-400")
+    new Component("p", "text-xl roboto-flex-400 opacity-0 animate-fade-in-up delay-[300ms]")
       .setText(locationContactData.address)
       .render({ target: wrapper.element });
 
     // Botões
     const btnGroup = new Component(
       "div",
-      "flex flex-wrap md:flex-row justify-center md:justify-start gap-4 mt-4 text-primary-content"
+      "flex flex-wrap md:flex-row justify-center md:justify-start gap-4 mt-4 text-primary-content animate-fade-in-up delay-[600ms]"
     ).render({ target: wrapper.element });
 
     // WhatsApp
