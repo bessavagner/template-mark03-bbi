@@ -32,7 +32,7 @@ export class AppHero extends Component {
     super(
       "div",
       "hero-content w-10/12 md:w-full max-w-full relative text-center " +
-        "mt-30 md:mt-20 mx-auto px-4 sm:px-6 lg:px-8 z-10"
+        "mt-20 mx-auto px-4 sm:px-6 lg:px-8 z-10"
     );
   }
 
