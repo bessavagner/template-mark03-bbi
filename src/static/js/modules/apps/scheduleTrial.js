@@ -8,6 +8,10 @@ import {
   FieldsContainer,
 } from "../components/fields.js";
 
+import { FormValidator, PhoneValidator, DiaUtilValidator } from "../components/forms.js";
+import { horarioOptions } from "./data/scheduleData.js";
+
+
 export class ScheduleForm extends Form {
   /**
    * @param {string | string[] | null} classList
@@ -133,15 +137,7 @@ export class ScheduleForm extends Form {
               text: "Horário",
               for: "horario",
             },
-            options: [
-              { value: "-1", text: "--" },
-              { value: "5:30", text: "5:30" },
-              { value: "6:30", text: "6:30" },
-              { value: "7:30", text: "7:30" },
-              { value: "16:30", text: "16:30" },
-              { value: "18:00", text: "18:00" },
-              { value: "19:00", text: "19:00" },
-            ],
+            options: [{ value: "-1", text: "--" }, ...horarioOptions],
           }
         )
         .renderContent()
@@ -198,36 +194,34 @@ export class ScheduleForm extends Form {
   }
   /** @returns {boolean} se o formulário é válido */
   validate() {
-    let isValid = true;
-    let firstInvalidField = null;
+    const validator = new FormValidator(this, {
+      nomeSobrenome: { required: true, message: "Informe seu nome completo" },
+      "emailTelefone.email": {
+        required: true,
+        message: "E-mail obrigatório",
+        validate: (v) => v.includes("@"),
+        error: "Formato inválido",
+      },
+      "emailTelefone.telefone": {
+        required: true,
+        message: "Telefone obrigatório",
+        validate: PhoneValidator.isValid,
+        error: "Número inválido",
+      },
+      "dataHorario.data": { 
+        required: true,
+        message: "Escolha uma data",
+        validate: DiaUtilValidator.isValid,
+        error: "Escolha dias de segunda a sexta-feira",
+       },
+      "dataHorario.horario": {
+        required: true,
+        validate: HorarioValidator.isValid,
+        error: "Escolha um horário válido",
+      },
+    });
 
-    const check = (field, condition, message) => {
-      field.clearError();
-      if (condition) {
-        field.setError(message);
-        if (!firstInvalidField) firstInvalidField = field;
-        isValid = false;
-      }
-    };
-
-    const nome = this.fields["nomeSobrenome"];
-    check(nome, !nome.getValue().trim(), "Digite seu nome completo");
-
-    const email = this.fields["emailTelefone"].fields["email"];
-    check(email, !email.getValue().trim(), "E-mail é obrigatório");
-
-    const tel = this.fields["emailTelefone"].fields["telefone"];
-    check(tel, !tel.getValue().trim(), "Telefone é obrigatório");
-
-    const data = this.fields["dataHorario"].fields["data"];
-    check(data, !data.getValue().trim(), "Selecione uma data");
-
-    const horario = this.fields["dataHorario"].fields["horario"];
-    check(horario, horario.getValue() === "-1", "Escolha um horário válido");
-
-    if (firstInvalidField?.element) firstInvalidField.element.focus();
-
-    return isValid;
+    return validator.validate();
   }
 }
 
@@ -247,5 +241,24 @@ export class ScheduleFormApp extends Component {
     this.renderContent();
     this.form.render({ target: this.element });
     this.form.init();
+  }
+}
+
+export class HorarioValidator {
+  /**
+   * Verifica se o horário está presente nos valores permitidos.
+   * @param {string} value
+   * @returns {boolean}
+   */
+  static isValid(value, valid) {
+    return horarioOptions.some(opt => opt.value === value);
+  }
+
+  /**
+   * Retorna lista de horários válidos (apenas os valores).
+   * @returns {string[]}
+   */
+  static getValidHorarios() {
+    return horarioOptions.map(opt => opt.value);
   }
 }

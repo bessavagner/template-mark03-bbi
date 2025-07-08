@@ -13,6 +13,7 @@ import {
   FieldsContainer,
 } from "./fields.js";
 
+
 export class Form extends FieldsContainer {
   constructor(classList = null) {
     super({ tagName: "form", classList: classList });
@@ -99,3 +100,108 @@ export class Form extends FieldsContainer {
     return false;
   }
 }
+
+export class FormValidator {
+  /**
+   * @param {Form} formInstance
+   * @param {Object} rules
+   */
+  constructor(formInstance, rules = {}) {
+    this.form = formInstance;
+    this.rules = rules;
+    this.firstInvalidField = null;
+    this.isValid = true;
+  }
+
+  validate() {
+    this.isValid = true;
+    this.firstInvalidField = null;
+
+    for (const [key, rule] of Object.entries(this.rules)) {
+      const field = this._resolveField(key);
+      if (!field || typeof field.getValue !== "function") continue;
+
+      field.clearError?.(); // se existir, remove erro anterior
+
+      const value = field.getValue()?.trim?.() ?? "";
+
+      // Regra required
+      if (rule.required && !value) {
+        this._invalidate(field, rule.message || "Campo obrigatório");
+        continue;
+      }
+
+      // Regra customizada
+      if (rule.validate && !rule.validate(value)) {
+        this._invalidate(field, rule.error || "Valor inválido");
+        continue;
+      }
+    }
+
+    if (!this.isValid && this.firstInvalidField?.element) {
+      this.firstInvalidField.element.focus();
+    }
+
+    return this.isValid;
+  }
+
+  _invalidate(field, message) {
+    field.setError?.(message);
+    if (!this.firstInvalidField) this.firstInvalidField = field;
+    this.isValid = false;
+  }
+
+  _resolveField(key) {
+    const path = key.split(".");
+    let current = this.form;
+    for (const part of path) {
+      if (!current?.fields?.[part]) return null;
+      current = current.fields[part];
+    }
+    return current;
+  }
+}
+
+export class PhoneValidator {
+  /**
+   * Verifica se um número de telefone é válido após remover caracteres não numéricos.
+   * @param {string} value
+   * @returns {boolean}
+   */
+  static isValid(value) {
+    if (typeof value !== "string") return false;
+    const digits = PhoneValidator.normalize(value);
+
+    return (
+      digits.length === 9 ||  // número sem DDD (9 dígitos)
+      digits.length === 10 || // fixo com DDD
+      digits.length === 11    // celular com DDD
+    );
+  }
+
+  /**
+   * Normaliza o número para formato E.164-like ou brasileiro compacto (somente dígitos).
+   * Ex: "(88) 9 9999-9999" → "88999999999"
+   * @param {string} value
+   * @returns {string}
+   */
+  static normalize(value) {
+    return value.replace(/\D/g, "");
+  }
+}
+
+export class DiaUtilValidator {
+  /**
+   * Verifica se a data informada é um dia útil (segunda a sexta).
+   * @param {string} value - Data em formato ISO (YYYY-MM-DD)
+   * @returns {boolean}
+   */
+  static isValid(value) {
+    if (!value) return false;
+    const date = new Date(value);
+    const day = date.getDay(); // 6 = domingo, 5 = sábado
+    console.log(`Dia da semana: ${day} (${date.toISOString()})`);
+    return day < 5;
+  }
+}
+
