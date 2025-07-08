@@ -21,7 +21,7 @@ export class Button extends Component {
    */
   renderContent(options = {}) {
     if (options?.text) {
-      this.setContent(options.text);
+      this.setText(options.text);
     }
     if (options?.attributes) {
       for (const [key, value] of Object.entries(options.attributes)) {
@@ -56,7 +56,7 @@ export class Anchor extends Component {
   }
   renderContent(options = {}) {
     if (options?.text) {
-      this.setContent(options.text);
+      this.setText(options.text);
     }
     if (options?.attributes) {
       for (const [key, value] of Object.entries(options.attributes)) {
