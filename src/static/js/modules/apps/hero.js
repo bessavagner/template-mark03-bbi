@@ -34,6 +34,7 @@ export class AppHero extends Component {
       "hero-content w-10/12 md:w-full max-w-full relative text-center " +
         "mt-20 mx-auto px-4 sm:px-6 lg:px-8 z-10"
     );
+    this.form = new ScheduleForm();
   }
 
   /** Monta o DOM interno */
@@ -44,6 +45,8 @@ export class AppHero extends Component {
 
     this.addComponent(this._buildLeftPlaceholder());
     this.addComponent(this._buildContent(buttonTargetId));
+    this.form.init();
+    console.log(this.form.fields);
 
     return this;
   }
@@ -88,17 +91,16 @@ _buildContent(buttonTargetId = "contact") {
     "text-lg sm:text-xl md:text-2xl barlow-condensed-semibold mb-10 opacity-0 animate-slide-up delay-[150ms]"
   ).setText("AGENDE AGORA SEU TREINO EXPERIMENTAL!");
   
-  const form = new ScheduleForm();
-  cta.render({ target: form.element });
+  cta.render({ target: wrapper.element });
 
   // Form animado
-  form.renderContent();
-  form.removeClass("bg-base-300");
-  form.addClassList("bg-base-300/85 mb-10 opacity-0 animate-grow-in delay-[300ms]");
-  form.fields["submitButton"].addClassList("mt-10");
-  form.fields["submitButton"].removeClass("self-end");
+  this.form.renderContent();
+  this.form.removeClass("bg-base-300");
+  this.form.addClassList("bg-base-300/85 mb-10 opacity-0 animate-grow-in delay-[300ms]");
+  this.form.fields["submitButton"].addClassList("mt-10");
+  this.form.fields["submitButton"].removeClass("self-end");
 
-  form.render({ target: wrapper.element });
+  this.form.render({ target: wrapper.element });
 
   return wrapper;
 }

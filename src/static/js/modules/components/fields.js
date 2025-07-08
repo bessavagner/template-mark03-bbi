@@ -288,6 +288,8 @@ export class LabeledField extends Component {
     this.label = new Label(labelClassList);
     /** @type {FormElementComponent|Input|Select|null} */
     this.field = null; // Será definido nas subclasses
+    /** @type {FieldError|null} */
+    this.error = null;
     this.state = {
       isLabelMounted: false,
       isInputMounted: false,
@@ -363,6 +365,33 @@ export class LabeledField extends Component {
   _buildFieldContent(options = {}) {
     console.error("_buildFieldContent must be implemented by subclass.");
     return {};
+  }
+  setError(message = "Campo obrigatório") {
+    if (!this.error) {
+      this.error = new FieldError(message);
+      this.addComponent(this.error);
+    } else {
+      this.error.setMessage(message);
+    }
+
+    if (this.field) {
+      this.field.addClass("input-error");
+    }
+
+    return this;
+  }
+
+  clearError() {
+    if (this.error) {
+      this.error.remove();
+      this.error = null;
+    }
+
+    if (this.field) {
+      this.field.removeClass("input-error");
+    }
+
+    return this;
   }
 }
 
@@ -591,5 +620,27 @@ export class FieldsContainer extends Component {
         );
       this.setState({ hasField: this._hasField() });
     }
+  }
+}
+
+// Dentro de fields.js
+
+export class FieldError extends Component {
+  /**
+   * @param {string} [message=""] - Mensagem de erro a ser exibida.
+   */
+  constructor(message = "") {
+    super("span", "text-error text-sm mt-1");
+    this.setText(message);
+  }
+  /**
+   * Renderiza o conteúdo do FieldError.
+   * @param {Object} options - Opções para configurar o FieldError.
+   * @param {string} [options.message] - Mensagem de erro a ser exibida.
+   * @returns {this} Retorna a instância do FieldError para encadeamento.
+   */
+  setMessage(message) {
+    this.setText(message);
+    return this;
   }
 }

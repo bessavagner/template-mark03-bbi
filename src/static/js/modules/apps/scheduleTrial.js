@@ -165,15 +165,16 @@ export class ScheduleForm extends Form {
     const data = super.getFormData();
     console.log(data);
     return {
-      "nome_sobrenome": data.nomeSobrenome,
-      "email": data["emailTelefone.email"],
-      "telefone": data["emailTelefone.telefone"],
-      "data": data["dataHorario.data"],
-      "horario": data["dataHorario.horario"],
-    }
+      nome_sobrenome: data.nomeSobrenome,
+      email: data["emailTelefone.email"],
+      telefone: data["emailTelefone.telefone"],
+      data: data["dataHorario.data"],
+      horario: data["dataHorario.horario"],
+    };
   }
   async handleSubmit(event) {
     event.preventDefault();
+    if (!this.validate()) return;
     const data = this.getFormData();
     try {
       console.log(data);
@@ -194,6 +195,39 @@ export class ScheduleForm extends Form {
     } catch (error) {
       console.error("Erro ao enviar formulário:", error);
     }
+  }
+  /** @returns {boolean} se o formulário é válido */
+  validate() {
+    let isValid = true;
+    let firstInvalidField = null;
+
+    const check = (field, condition, message) => {
+      field.clearError();
+      if (condition) {
+        field.setError(message);
+        if (!firstInvalidField) firstInvalidField = field;
+        isValid = false;
+      }
+    };
+
+    const nome = this.fields["nomeSobrenome"];
+    check(nome, !nome.getValue().trim(), "Digite seu nome completo");
+
+    const email = this.fields["emailTelefone"].fields["email"];
+    check(email, !email.getValue().trim(), "E-mail é obrigatório");
+
+    const tel = this.fields["emailTelefone"].fields["telefone"];
+    check(tel, !tel.getValue().trim(), "Telefone é obrigatório");
+
+    const data = this.fields["dataHorario"].fields["data"];
+    check(data, !data.getValue().trim(), "Selecione uma data");
+
+    const horario = this.fields["dataHorario"].fields["horario"];
+    check(horario, horario.getValue() === "-1", "Escolha um horário válido");
+
+    if (firstInvalidField?.element) firstInvalidField.element.focus();
+
+    return isValid;
   }
 }
 
