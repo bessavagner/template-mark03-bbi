@@ -38,13 +38,6 @@
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBOMv2oLa_XlmlRL1owPqyhjcEygqXuX_E&callback=console.debug&libraries=maps,marker&loading=async&v=beta">
       </script>
   </head>
-  <script>
-    if (document.fonts) {
-      document.fonts.ready.then(() => {
-        document.documentElement.classList.add('fonts-loaded');
-      });
-    }
-  </script>
   <body class="relative overflow-x-hidden w-screen bg-base-100">
     {% block header %}{% include 'includes/header.html' %}{% endblock %}
     {% block content %}{% endblock %}

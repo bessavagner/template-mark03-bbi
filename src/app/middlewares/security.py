@@ -11,7 +11,7 @@ from app.config import settings
 logger = logging.getLogger(__name__)
 
 rate_limit_data = defaultdict(list)  # IP → [timestamps]
-MAX_REQUESTS_PER_MINUTE = 30
+MAX_REQUESTS_PER_MINUTE = 200
 
 
 def get_client_ip(request: web.Request) -> str:
@@ -25,12 +25,23 @@ async def security_headers_middleware(request, handler):
         "X-Frame-Options": "DENY",
         "X-Content-Type-Options": "nosniff",
         "Referrer-Policy": "strict-origin-when-cross-origin",
-        "Content-Security-Policy": "default-src 'self'",
         "Strict-Transport-Security": (
             "max-age=31536000; includeSubDomains; preload"
+        ),
+        "Content-Security-Policy": (
+            "default-src 'self'; "
+            "style-src 'self' https://fonts.googleapis.com 'unsafe-hashes'; "
+            "font-src 'self' https://fonts.gstatic.com; "
+            "img-src 'self' data: https://maps.gstatic.com https://maps.googleapis.com; "
+            "script-src 'self' https://maps.googleapis.com 'unsafe-inline' 'wasm-unsafe-eval'; "
+            "connect-src 'self' https://maps.googleapis.com https://maps.gstatic.com https://www.gstatic.com; "
+            "worker-src 'self' blob:; "
+            "frame-ancestors 'none'; "
+            "base-uri 'self'"
         )
     })
     return response
+
 
 
 @web.middleware

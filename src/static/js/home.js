@@ -15,6 +15,12 @@ import { calendarSmall } from "./modules/svg.js";
 import { LazyMount } from "./modules/utils/lazyMount.js";
 import { Component } from "./modules/engine/core.js";
 
+if (document.fonts) {
+  document.fonts.ready.then(() => {
+    document.documentElement.classList.add('fonts-loaded');
+  });
+}
+
 const galleryImages = [
   { src: "/static/images/gallery/box-01.png", alt: "Rig principal e anilhas" },
   { src: "/static/images/gallery/box-02.png", alt: "Área de levantamento com plataformas" },
