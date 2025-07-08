@@ -33,6 +33,18 @@ export class Button extends Component {
     }
     return this;
   }
+  disable() {
+    this.setAttribute("disabled", "true");
+    this.setAttribute("aria-disabled", "true");
+    this.addClass("disabled");
+    return this;
+  }
+  enable() {
+    this.removeAttribute("disabled");
+    this.removeAttribute("aria-disabled");
+    this.removeClass("disabled");
+    return this;
+  }
 }
 
 

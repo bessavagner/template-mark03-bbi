@@ -45,12 +45,21 @@ class ScheduleForm:
         nome = self.data.get("nome_sobrenome", "").strip()
         if not nome:
             raise ValidationError("Informe seu nome completo")
+        nome = re.sub(r"\s+", " ", nome)  # normaliza espaços
+
+        if not re.fullmatch(r"[A-Za-zÀ-ÖØ-öø-ÿ\s\-]{3,100}", nome):
+            raise ValidationError("Nome inválido")
         return nome
 
     def clean_email(self):
-        email = self.data.get("email", "").strip()
-        if not email or "@" not in email:
+        email = self.data.get("email", "").strip().lower()
+        if not email:
+            raise ValidationError("E-mail é obrigatório")
+
+        pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+        if not re.fullmatch(pattern, email):
             raise ValidationError("E-mail inválido")
+
         return email
 
     def clean_telefone(self):
@@ -61,8 +70,10 @@ class ScheduleForm:
 
     def clean_data(self):
         raw = self.data.get("data")
+        if not isinstance(raw, str):
+            raise ValidationError("Data inválida")
         try:
-            date = datetime.strptime(raw, "%Y-%m-%d")
+            date = datetime.strptime(raw.strip(), "%Y-%m-%d")
         except Exception as err:
             raise ValidationError("Data inválida") from err
 
@@ -72,7 +83,7 @@ class ScheduleForm:
         return raw
 
     def clean_horario(self):
-        horario = self.data.get("horario")
+        horario = self.data.get("horario", "").strip()
         if not any(h["value"] == horario for h in horarioOptions):
             raise ValidationError("Horário inválido")
         return horario

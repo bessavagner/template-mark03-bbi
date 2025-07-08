@@ -8,9 +8,14 @@ import {
   FieldsContainer,
 } from "../components/fields.js";
 
-import { FormValidator, PhoneValidator, DiaUtilValidator } from "../components/forms.js";
-import { horarioOptions } from "./data/scheduleData.js";
+import { Popup } from "../components/display.js";
 
+import {
+  FormValidator,
+  PhoneValidator,
+  DiaUtilValidator,
+} from "../components/forms.js";
+import { horarioOptions } from "./data/scheduleData.js";
 
 export class ScheduleForm extends Form {
   /**
@@ -26,6 +31,7 @@ export class ScheduleForm extends Form {
       classList ||
         "flex flex-col items-center w-full bg-base-300 shadow-xl rounded-xl p-8"
     );
+    this.popup = new Popup();
   }
   renderContent() {
     this.addField(
@@ -171,9 +177,11 @@ export class ScheduleForm extends Form {
   async handleSubmit(event) {
     event.preventDefault();
     if (!this.validate()) return;
+
     const data = this.getFormData();
+    this.submitButton?.disable();
+
     try {
-      console.log(data);
       const response = await fetch("/schedule-trial", {
         method: "POST",
         headers: {
@@ -183,15 +191,28 @@ export class ScheduleForm extends Form {
       });
 
       const result = await response.json();
-
-      if (result.popup) {
-        // Aqui você chamaria um componente ou utilitário que exibe popups
-        console.log(result.popup); // você implementará `showPopup`
+      console.log("Resposta do servidor:", result);
+      if (result?.popup) {
+        this.popup.show(result.popup);
+      } else {
+        this.popup.show({
+          title: "Erro inesperado",
+          message: "Não foi possível processar a resposta do servidor.",
+          type: "error",
+        });
       }
     } catch (error) {
       console.error("Erro ao enviar formulário:", error);
+      this.popup.show({
+        title: "Erro de conexão",
+        message: "Verifique sua internet ou tente novamente mais tarde.",
+        type: "error",
+      });
+    } finally {
+      this.submitButton?.enable();
     }
   }
+
   /** @returns {boolean} se o formulário é válido */
   validate() {
     const validator = new FormValidator(this, {
@@ -208,12 +229,12 @@ export class ScheduleForm extends Form {
         validate: PhoneValidator.isValid,
         error: "Número inválido",
       },
-      "dataHorario.data": { 
+      "dataHorario.data": {
         required: true,
         message: "Escolha uma data",
         validate: DiaUtilValidator.isValid,
         error: "Escolha dias de segunda a sexta-feira",
-       },
+      },
       "dataHorario.horario": {
         required: true,
         validate: HorarioValidator.isValid,
@@ -251,7 +272,7 @@ export class HorarioValidator {
    * @returns {boolean}
    */
   static isValid(value, valid) {
-    return horarioOptions.some(opt => opt.value === value);
+    return horarioOptions.some((opt) => opt.value === value);
   }
 
   /**
@@ -259,6 +280,6 @@ export class HorarioValidator {
    * @returns {string[]}
    */
   static getValidHorarios() {
-    return horarioOptions.map(opt => opt.value);
+    return horarioOptions.map((opt) => opt.value);
   }
 }

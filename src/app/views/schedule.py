@@ -3,31 +3,10 @@ from aiohttp import web
 import json
 
 from app.forms.schedule import ScheduleForm
+from app.utils import send_confirmation_email, notify_admin_schedule
+
 
 logger = logging.getLogger(__name__)
-
-
-async def process_schedule_trial(data: dict) -> dict:
-    """
-    Simula o processamento do agendamento de uma aula experimental.
-    Substitua por lógica real posteriormente.
-    """
-    nome = data.get("nome_sobrenome", "aluno(a)")
-    horario = data.get("horario", "")
-    data_treino = data.get("data", "")
-
-    return {
-        "success": True,
-        "popup": {
-            "title": "Agendamento confirmado!",
-            "message": (
-                f"{nome}, sua aula está marcada"
-                f" para {data_treino} às {horario}."
-            ),
-            "type": "success",
-        }
-    }
-
 
 class ScheduleTrialView(web.View):
     async def post(self):
@@ -45,7 +24,7 @@ class ScheduleTrialView(web.View):
 
         form = ScheduleForm(data)
         if not form.is_valid():
-            return web.json_response({
+            response = web.json_response({
                 "success": False,
                 "errors": form.errors,
                 "popup": {
@@ -54,12 +33,27 @@ class ScheduleTrialView(web.View):
                     "type": "error"
                 }
             }, status=422)
+            logger.error("Formulário inválido: %s", form.errors)
+            return response
 
-        # Aqui poderemos chamar o serviço de envio de e-mail futuramente
         cleaned = form.cleaned_data
         logger.info("Agendamento validado: %s", cleaned)
+        # ✅ ENVIO DO E-MAIL DE CONFIRMAÇÃO
+        try:
+            logger.debug("Enviando e-mail de confirmação para %s", cleaned["email"])
+            await send_confirmation_email(
+                nome_sobrenome=cleaned["nome_sobrenome"],
+                user_email=cleaned["email"],
+                telefone=cleaned["telefone"],
+                data=cleaned["data"],
+                horario=cleaned["horario"]
+            )
+            await notify_admin_schedule(cleaned)
+        except Exception:
+            logger.exception("Erro ao enviar e-mail de confirmação para o usuário.")
 
-        return web.json_response({
+        # ✅ RESPOSTA AO CLIENTE
+        response = web.json_response({
             "success": True,
             "popup": {
                 "title": "Agendamento recebido",
@@ -70,3 +64,5 @@ class ScheduleTrialView(web.View):
                 "type": "success"
             }
         })
+        logger.debug("Resposta enviada ao cliente: %s", response)
+        return response

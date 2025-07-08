@@ -49,6 +49,15 @@ export class Component {
     this.element.setAttribute(attr, value);
     return this;
   }
+  /**
+     * Removes an attribute from the component's element.
+     * @param {string} attr - The attribute name to remove.
+     * @returns {Component} This Component instance for chaining.
+     */
+  removeAttribute(attr) {
+    this.element.removeAttribute(attr);
+    return this;
+  }
 
   /**
      * Sets multiple attributes on thelse if (target instanceof Node) {

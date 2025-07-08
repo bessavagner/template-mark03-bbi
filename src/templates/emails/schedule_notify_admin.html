@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Agendamento Recebido</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0a0a0a;
+      color: #f4f4f4;
+      padding: 20px;
+    }
+    .container {
+      background: #121212;
+      border: 1px solid #222;
+      border-radius: 10px;
+      padding: 24px;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 0 30px rgba(0, 191, 255, 0.2);
+    }
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      color: #00bfff;
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+    .info {
+      background: #1a1a1a;
+      padding: 16px;
+      border-left: 4px solid #00bfff;
+    }
+    .info p {
+      margin: 8px 0;
+    }
+    .label {
+      font-weight: bold;
+      color: #ccc;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Novo agendamento de treino</h1>
+    <div class="info">
+      <p><span class="label">Nome:</span> {{ nome_sobrenome }}</p>
+      <p><span class="label">E-mail:</span> {{ email }}</p>
+      <p><span class="label">Telefone:</span> {{ telefone }}</p>
+      <p><span class="label">Data:</span> {{ data }}</p>
+      <p><span class="label">Horário:</span> {{ horario }}</p>
+    </div>
+  </div>
+</body>
+</html>

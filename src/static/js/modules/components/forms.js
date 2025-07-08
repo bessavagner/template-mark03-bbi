@@ -200,7 +200,6 @@ export class DiaUtilValidator {
     if (!value) return false;
     const date = new Date(value);
     const day = date.getDay(); // 6 = domingo, 5 = sábado
-    console.log(`Dia da semana: ${day} (${date.toISOString()})`);
     return day < 5;
   }
 }

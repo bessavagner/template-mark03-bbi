@@ -23,7 +23,9 @@ export class CardSection extends Component {
     } else if (type === "footer") {
       className = "card-footer";
     } else {
-      console.warn(`CardSection: Invalid type "${type}". Defaulting to "body".`);
+      console.warn(
+        `CardSection: Invalid type "${type}". Defaulting to "body".`
+      );
       className = "card-body";
     }
     super("div", `card-${type}`);
@@ -68,13 +70,30 @@ export class Card extends Component {
   }
 
   /**
-   * Sets the  content of the card body.
+   * Sets the content of the card body.
    *
-   * @param {string|HTMLElement|Component} content - The innerHTML to set, or a HTMLElement or Component.
+   * @param {string|HTMLElement|Component|Array<string|HTMLElement|Component>} content - The content(s) to set.
    * @returns {Card} This Component instance for chaining.
    */
   setBodyContent(content) {
-    this.body.setContent(content);
+    this.body.setContent(""); // Clear previous content
+    if (Array.isArray(content)) {
+      content.forEach((item) => {
+        if (item instanceof Component) {
+          this.body.addComponent(item);
+        } else if (item instanceof HTMLElement) {
+          this.body.element.appendChild(item);
+        } else {
+          this.body.setContent(item);
+        }
+      });
+    } else if (content instanceof Component) {
+      this.body.addComponent(content);
+    } else if (content instanceof HTMLElement) {
+      this.body.element.appendChild(content);
+    } else {
+      this.body.setContent(content);
+    }
     return this;
   }
   /**
@@ -164,7 +183,6 @@ export class Card extends Component {
   }
 }
 
-
 export class Circle extends Component {
   constructor() {
     super("div", "rounded-full flex items-center justify-center");
@@ -174,7 +192,9 @@ export class Circle extends Component {
     const mdSize = options.msSize || "40";
     const bgClass = options.bgClass || "bg-primary";
     const classList = options.classList || "";
-    this.addClassList(`w-${size} h-${size} md:w-${mdSize} md:h-${mdSize} ${bgClass} ${classList}`);
+    this.addClassList(
+      `w-${size} h-${size} md:w-${mdSize} md:h-${mdSize} ${bgClass} ${classList}`
+    );
     if (options?.content) {
       this.setContent(options.content);
     }
@@ -207,7 +227,10 @@ export class CarouselBase extends Component {
     }
 
     /**  @type {Component} */
-    this.track = new Component("div", "flex h-full transition-transform duration-500 ease-in-out");
+    this.track = new Component(
+      "div",
+      "flex h-full transition-transform duration-500 ease-in-out"
+    );
     this.addComponent(this.track);
 
     /** @protected @type {Component[]} */
@@ -216,7 +239,7 @@ export class CarouselBase extends Component {
     /** @protected */ this.currentIndex = 0;
     /** @protected */ this.interval = interval;
     /** @protected */ this.visibleCount = visibleCount;
-    /** @private */  this._timer = undefined;
+    /** @private */ this._timer = undefined;
   }
 
   /**
@@ -227,11 +250,11 @@ export class CarouselBase extends Component {
   renderContent({ items = [] } = {}) {
     // Se já existiam slides, remove-os antes de redesenhar
     if (this.slides.length) {
-      this.slides.forEach(slide => slide.remove());
+      this.slides.forEach((slide) => slide.remove());
       this.slides = [];
     }
 
-    items.forEach(itemData => {
+    items.forEach((itemData) => {
       const slide = this._buildSlide(itemData);
       this.slides.push(slide);
       this.track.addComponent(slide);
@@ -241,7 +264,7 @@ export class CarouselBase extends Component {
       width: `${this.slides.length * 100}%`,
       display: "flex",
     });
-    this.slides.forEach(slide => {
+    this.slides.forEach((slide) => {
       slide.setStyle({
         width: `${100 / this.slides.length}%`,
         flexShrink: "0",
@@ -334,5 +357,83 @@ export class CarouselBase extends Component {
   /** Limpa timer ao remover do DOM. */
   beforeUnmount() {
     this.stop();
+  }
+}
+
+export class Popup extends Component {
+  constructor() {
+    super(
+      "div",
+      "fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+    );
+    this.setAttribute("role", "dialog");
+
+    const classList = "bg-base-300 rounded-xl shadow-lg w-[90%] max-w-md p-3 md:p-6 ";
+    this.card = new Card(classList);
+    this.addComponent(this.card);
+
+    /** @type {{ isVisible: boolean, timeout: number|undefined|null }} */
+    this.state = {
+      isVisible: false,
+      timeout: undefined,
+    };
+  }
+
+  /**
+   * Exibe o popup com título, mensagem e tipo visual (success, error, info).
+   * @param {{
+   *   title: string,
+   *   message: string,
+   *   type?: "success" | "error" | "info",
+   *   autoCloseMs?: number
+   * }} options
+   */
+  show({ title, message, type = "info", autoCloseMs = 20000 }) {
+    const titleComp = new Component("h2", "text-xl font-bold mb-2").setText(
+      title
+    ).addComponent(this._buildIcon(type));
+    const msgComp = new Component("p", "text-base leading-relaxed").setText(
+      message
+    );
+
+    this.card.renderContent({
+      body: [titleComp, msgComp],
+      footer: new Component("button", "btn btn-sm btn-outline self-end mt-4")
+        .setText("Fechar")
+        .addEventListener("click", () => this.hide()),
+    });
+    this.card.footer.addClassList("flex justify-end");
+    if (!this.isMounted()) {
+      this.render({ target: document.body });
+    }
+
+    this.addClass("animate-fade-in");
+    this.removeClass("hidden");
+    console.log("Classes do elemento", this.element.classList);
+    this.state.isVisible = true;
+
+    if (autoCloseMs > 0) {
+      clearTimeout(this.state.timeout);
+      this.state.timeout = setTimeout(() => this.hide(), autoCloseMs);
+    }
+
+    return this;
+  }
+
+  hide() {
+    this.addClass("hidden");
+    this.state.isVisible = false;
+    clearTimeout(this.state.timeout);
+  }
+
+  _buildIcon(type) {
+    const map = {
+      success: "✅",
+      error: "❌",
+      info: "ℹ️",
+    };
+    return new Component("span", "mx-1").setText(
+      map[type] || "ℹ️"
+    );
   }
 }

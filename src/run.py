@@ -12,8 +12,6 @@ if __name__ == "__main__":
     from app.loggingconfig import setup_logging
     setup_logging()
     logger = logging.getLogger("app")
-    aiohttp_logger = logging.getLogger("aiohttp.server")
-    aiohttp_logger.setLevel(logging.DEBUG)
 
     logger.info("Starting %s on port %s", settings.APP_NAME, settings.APP_PORT)
     logger.debug("Allowed hosts: %s", settings.ALLOWED_HOSTS)
