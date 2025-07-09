@@ -24,6 +24,7 @@ export class AppFooter extends Component {
             { sectionTargetId: "testimonials-section", text: "Depoimentos"},
             { sectionTargetId: "coaches-section", text: "Equipe"},
             { sectionTargetId: "locationcontact-section", text: "Contato"},
+            { sectionTargetId: "gallery-section", text: "Galeria" },
         ];
 
         const menu = new Component("ul", "flex space-x-4");
