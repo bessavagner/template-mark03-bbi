@@ -52,7 +52,7 @@ export class AppNav extends Component {
       ])
       .render({ target: this.element });
 
-    new Component("div", "md:navbar-center")
+    new Component("div", "hidden md:navbar-center")
       .addComponent(menu)
       .render({ target: this.element });
 
