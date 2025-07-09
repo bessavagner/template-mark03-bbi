@@ -8,6 +8,7 @@
 @source "./input.css";
 @source "../../templates/*.html";
 @source "../../templates/includes/*.html";
+@source "../../templates/pages/*.html";
 @source "../../templates/sections/*.html";
 @plugin "daisyui" {
   themes: corporate --default, dracula --prefersdark;

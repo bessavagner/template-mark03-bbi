@@ -8,6 +8,7 @@ from app.middlewares.security import (
     security_headers_middleware,
     rate_limit_middleware,
     csrf_protection_middleware,
+    nonce_middleware
 )
 
 logger = logging.getLogger("main")
@@ -16,6 +17,7 @@ logger = logging.getLogger("main")
 def create_app():
     app_ = web.Application(
         middlewares=[
+            nonce_middleware,
             security_headers_middleware,
             rate_limit_middleware,
             csrf_protection_middleware,

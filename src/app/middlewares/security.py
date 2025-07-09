@@ -103,3 +103,26 @@ async def csrf_protection_middleware(request, handler):
             }, status=403)
 
     return await handler(request)
+
+@web.middleware
+async def nonce_middleware(request, handler):
+    import base64, os
+    nonce = base64.b64encode(os.urandom(16)).decode("utf-8")
+
+    request["nonce"] = nonce
+    response = await handler(request)  # aqui a view roda
+
+    # Aqui montamos o CSP com o nonce
+    response.headers["Content-Security-Policy"] = (
+        f"default-src 'self'; "
+        f"style-src 'self' https://fonts.googleapis.com 'nonce-{nonce}'; "
+        f"script-src 'self' https://maps.googleapis.com 'nonce-{nonce}' 'wasm-unsafe-eval'; "
+        f"img-src 'self' data: https://maps.gstatic.com https://maps.googleapis.com; "
+        f"font-src 'self' https://fonts.gstatic.com; "
+        f"connect-src 'self' https://maps.googleapis.com https://maps.gstatic.com https://www.gstatic.com data:; "
+        f"worker-src 'self' blob:; "
+        f"frame-ancestors 'none'; "
+        f"base-uri 'self';"
+    )
+    return response
+
