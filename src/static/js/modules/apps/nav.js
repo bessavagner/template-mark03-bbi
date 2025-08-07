@@ -8,10 +8,11 @@ export class AppNav extends Component {
   }
   renderContent() {
     const links = [
-      { sectionTargetId: "testimonials-section", text: "Depoimentos" },
-      { sectionTargetId: "coaches-section", text: "Equipe" },
-      { sectionTargetId: "locationcontact-section", text: "Contato" },
-      { sectionTargetId: "gallery-section", text: "Galeria" },
+      { sectionTargetId: "testimonials-section", href: "/#testimonials-section", text: "Depoimentos" },
+      { sectionTargetId: "coaches-section", href: "/#coaches-section", text: "Equipe" },
+      { sectionTargetId: "locationcontact-section", href: "/#locationcontact-section", text: "Contato" },
+      { sectionTargetId: "gallery-section", href: "/#gallery-section", text: "Galeria" },
+      { href: "/institucional/", text: "Institutional" },
     ];
     const menu = new Component(
       "ul",

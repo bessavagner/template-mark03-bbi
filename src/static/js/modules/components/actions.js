@@ -93,18 +93,26 @@ export class AnchorToSection extends Anchor {
     super({targetBlank: false, classList: classList });
   }
   renderContent(options = {}) {
-    const sectionTargetId = options?.sectionTargetId;
-    if (!sectionTargetId) {
+    const sectionTarget = options?.sectionTargetId;
+    const href = options?.href;
+    if (!sectionTarget && !href) {
       throw new Error("sectionTargetId is required for FooterAnchor");
     }
     return super.renderContent({
       ...options,
       onClick: (e) => {
         e.preventDefault();
-        console.log(`Scrolling to section: ${sectionTargetId}`);
-        document
-          .getElementById(sectionTargetId)
-          ?.scrollIntoView({ behavior: "smooth" });
+        if (options.sectionTargetId) {
+          console.log(`Scrolling to section: ${sectionTarget}`);
+          const element = document.getElementById(sectionTarget);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth" });
+          }
+        }
+        if (href) {
+          console.log(`Navigating to href: ${href}`);
+          window.location.href = href;
+        }
       },
     });
   }

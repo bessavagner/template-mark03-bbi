@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Base Inicial - Institucional{% endblock %}
+
+{% block content %}
+<section id="app-institucional" class="flex flex-col justify-start w-full">
+  <img id="hero-bg" src="{{ static('images/institucional-bg.png') }}" alt="Imagem de fundo do box Base Inicial"
+    class="absolute inset-0 w-full h-full object-cover opacity-40 z-10" />
+  <div id="app-institucional" class="mt-40 z-20">
+    <section id="institucional" class="relative w-full text-white overflow-hidden">
+      <div class="h-96 " style="background-image: {{ static('images/institucional-bg.png') }};">
+        <div class="h-full w-full flex items-center justify-center">
+          <div class="text-center px-4">
+            <h2 class="text-4xl md:text-6xl font-bold tracking-wide uppercase text-primary">
+              Box Base Inicial
+            </h2>
+            <p class="mt-4 text-lg md:text-2xl font-light max-w-2xl mx-auto">
+              Transformando vidas com movimento, paixão e comunidade
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Conteúdo -->
+      <div class="max-w-5xl mx-auto py-16 px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Missão -->
+        <div class="text-center">
+          <h3 class="text-2xl font-semibold text-primary mb-2 uppercase">Missão</h3>
+          <p class="text-base font-light">
+            Promover saúde, bem-estar e qualidade de vida através do treino funcional e Cross Training em um ambiente
+            que inspira superação.
+          </p>
+        </div>
+        <!-- Visão -->
+        <div class="text-center">
+          <h3 class="text-2xl font-semibold text-primary mb-2 uppercase">Visão</h3>
+          <p class="text-base font-light">
+            Ser referência em alta performance e atendimento humanizado, criando uma comunidade ativa e conectada.
+          </p>
+        </div>
+        <!-- Valores -->
+        <div class="text-center">
+          <h3 class="text-2xl font-semibold text-primary mb-2 uppercase">Valores</h3>
+          <ul class="text-base font-light list-disc list-inside space-y-1">
+            <p class="text-base font-light">
+              Comprometimento, comunidade, excelência, respeito e paixão pelo que fazemos.
+            </p>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Call to Action -->
+      <div id="institucional-cta" class="mx-auto w-fit mb-10"></div>
+    </section>
+
+</section>
+
+<script type="module" src="{{ static('js/institutional.js') }}"></script>
+{% endblock %}
