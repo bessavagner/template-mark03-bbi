@@ -31,8 +31,8 @@ export class AppFooter extends Component {
         text: "Equipe",
       },
       {
-        sectionTargetId: "locationcontact-section",
-        href: "/#locationcontact-section",
+        sectionTargetId: "location-contact-section",
+        href: "/#location-contact-section",
         text: "Contato",
       },
       {

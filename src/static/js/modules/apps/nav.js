@@ -10,7 +10,7 @@ export class AppNav extends Component {
     const links = [
       { sectionTargetId: "testimonials-section", href: "/#testimonials-section", text: "Depoimentos" },
       { sectionTargetId: "coaches-section", href: "/#coaches-section", text: "Equipe" },
-      { sectionTargetId: "locationcontact-section", href: "/#locationcontact-section", text: "Contato" },
+      { sectionTargetId: "location-contact-section", href: "/#location-contact-section", text: "Contato" },
       { sectionTargetId: "gallery-section", href: "/#gallery-section", text: "Galeria" },
       { href: "/institucional/", text: "Institutional" },
     ];
@@ -43,13 +43,17 @@ export class AppNav extends Component {
     new Component("div", "navbar-start ml-5 md:ml-0")
       .addComponents([
         new Component(
-          "div",
+          "a",
           "hidden md:block barlow-condensed-light text-3xl ml-5"
-        ).setText("Box Base Inicial"),
+        )
+        .setAttributes({ href: "/" })
+        .setText("Box Base Inicial"),
         new Component(
-          "div",
+          "a",
           "flex md:hidden barlow-condensed-light text-2xl"
-        ).setText("Base Inicial"),
+        )
+        .setAttributes({ href: "/" })
+        .setText("Base Inicial"),
       ])
       .render({ target: this.element });
 
