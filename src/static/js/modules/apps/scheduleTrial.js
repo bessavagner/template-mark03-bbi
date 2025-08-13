@@ -26,11 +26,27 @@ export class ScheduleForm extends Form {
    *  - Envio: POST para "/schedule-trial" com JSON contendo os dados
    *  - Resposta: Espera um JSON com uma chave "popup" para exibir um popup
    */
-  constructor(classList = null) {
-    super(
-      classList ||
-        "flex flex-col items-center w-full bg-base-300 shadow-xl rounded-xl p-8"
-    );
+  constructor(opts = {}) {
+    const classList =
+      opts.classList ??
+      "flex flex-col items-center w-full bg-base-300 shadow-xl rounded-xl p-8";
+    super(classList);
+
+    // namespace único p/ esta instância (permite constância em re-render)
+    const ns =
+      opts.idNs ??
+      `sf-${
+        crypto.randomUUID?.().slice(0, 8) ||
+        Math.random().toString(36).slice(2, 10)
+      }`;
+    this.ids = {
+      nome: `${ns}-nome`,
+      email: `${ns}-email`,
+      telefone: `${ns}-telefone`,
+      data: `${ns}-data`,
+      horario: `${ns}-horario`,
+    };
+
     this.popup = new Popup();
   }
   renderContent() {
@@ -44,15 +60,12 @@ export class ScheduleForm extends Form {
       },
       {
         type: "text",
-        name: "nomeSobrenome",
-        id: "nomeSobrenome",
+        id: this.ids.nome,
         required: true,
-        label: {
-          text: "Nome e Sobrenome",
-          for: "nomeSobrenome",
-        },
+        label: { text: "Nome e Sobrenome", for: this.ids.nome },
       }
     );
+
     this.addRenderedField(
       "emailTelefone",
       new FieldsContainer({
@@ -69,12 +82,9 @@ export class ScheduleForm extends Form {
           },
           {
             type: "email",
-            id: "email",
+            id: this.ids.email,
             required: true,
-            label: {
-              text: "E-mail",
-              for: "email",
-            },
+            label: { text: "E-mail", for: this.ids.email },
           }
         )
         .addField(
@@ -87,18 +97,14 @@ export class ScheduleForm extends Form {
           },
           {
             type: "tel",
-            id: "telefone",
+            id: this.ids.telefone,
             required: true,
-            label: {
-              text: "Telefone",
-              for: "telefone",
-            },
+            label: { text: "Telefone", for: this.ids.telefone },
           }
         )
         .renderContent()
     );
 
-    // Campo: Data
     const today = new Date().toISOString().split("T")[0];
     this.addRenderedField(
       "dataHorario",
@@ -116,16 +122,10 @@ export class ScheduleForm extends Form {
           },
           {
             type: "date",
-            id: "data",
+            id: this.ids.data,
             required: true,
-            label: {
-              text: "Data do treino",
-              for: "data",
-            },
-            attributes: {
-              min: today,
-              value: today,
-            },
+            label: { text: "Data do treino", for: this.ids.data },
+            attributes: { min: today, value: today },
           }
         )
         .addField(
@@ -137,12 +137,9 @@ export class ScheduleForm extends Form {
             labelClassList: "label ml-2",
           },
           {
-            id: "horario",
+            id: this.ids.horario,
             required: true,
-            label: {
-              text: "Horário",
-              for: "horario",
-            },
+            label: { text: "Horário", for: this.ids.horario },
             options: [{ value: "-1", text: "--" }, ...horarioOptions],
           }
         )
@@ -216,33 +213,46 @@ export class ScheduleForm extends Form {
   /** @returns {boolean} se o formulário é válido */
   validate() {
     const validator = new FormValidator(this, {
-      nomeSobrenome: { required: true, message: "Informe seu nome completo" },
+      nomeSobrenome: { required:true, message:"Informe seu nome completo" },
       "emailTelefone.email": {
-        required: true,
-        message: "E-mail obrigatório",
-        validate: (v) => v.includes("@"),
-        error: "Formato inválido",
+        required:true, message:"E-mail obrigatório",
+        validate:(v)=> v.includes("@"), error:"Formato inválido",
       },
       "emailTelefone.telefone": {
-        required: true,
-        message: "Telefone obrigatório",
-        validate: PhoneValidator.isValid,
-        error: "Número inválido",
+        required:true, message:"Telefone obrigatório",
+        validate: PhoneValidator.isValid, error:"Número inválido",
       },
       "dataHorario.data": {
-        required: true,
-        message: "Escolha uma data",
-        validate: DiaUtilValidator.isValid,
-        error: "Escolha dias de segunda a sexta-feira",
+        required:true, message:"Escolha uma data",
+        validate: DiaUtilValidator.isValid, error:"Escolha dias de segunda a sexta-feira",
       },
       "dataHorario.horario": {
-        required: true,
-        validate: HorarioValidator.isValid,
-        error: "Escolha um horário válido",
+        required:true,
+        validate: (v) => {
+          const select = this.element.querySelector(`#${this.ids.horario}`);
+          return HorarioValidator.isValid(v, select);   // <<< escopado
+        },
+        error:"Escolha um horário válido",
       },
     });
-
     return validator.validate();
+  }
+  init() {
+    if (typeof super.init === "function") super.init();
+
+    const dateInput = this.element.querySelector(`#${this.ids.data}`);
+    const horarioSelect = this.element.querySelector(`#${this.ids.horario}`);
+
+    const applyRule = (dateStr) => {
+      const dt = parseLocalYMD(dateStr);
+      if (!dt) return;
+      const dow = dt.getDay();         // 0=Dom, 2=Ter, 4=Qui
+      const isTueOrThu = (dow === 2 || dow === 4);
+      rebuildHorarioOptions(horarioSelect, isTueOrThu);
+    };
+
+    if (dateInput) applyRule(dateInput.value);
+    dateInput?.addEventListener("change", (e) => applyRule(e.target.value));
   }
 }
 
@@ -252,7 +262,7 @@ export class ScheduleFormApp extends Component {
       "div",
       "flex flex-col items-center container mx-auto px-4 py-8 w-11/12 md:w-1/2 h-full"
     );
-    this.form = new ScheduleForm();
+    this.form = new ScheduleForm({ idNs: "contact" });
   }
   renderContent() {
     this.form.renderContent();
@@ -271,8 +281,12 @@ export class HorarioValidator {
    * @param {string} value
    * @returns {boolean}
    */
-  static isValid(value, valid) {
-    return horarioOptions.some((opt) => opt.value === value);
+  static isValid(value, selectEl) {
+    if (selectEl) {
+      return [...selectEl.options].some(o => o.value === value && value !== "-1");
+    }
+    // Fallback seguro (selec não foi encontrado)
+    return horarioOptions.some(opt => opt.value === value && value !== "-1");
   }
 
   /**
@@ -283,3 +297,27 @@ export class HorarioValidator {
     return horarioOptions.map((opt) => opt.value);
   }
 }
+
+function parseLocalYMD(ymd) {
+  if (!ymd) return null;
+  const [y, m, d] = ymd.split("-").map(Number);
+  return new Date(y, m - 1, d);
+}
+function rebuildHorarioOptions(selectEl, isTueOrThu) {
+  if (!selectEl) return;
+  const current = selectEl.value;
+  const base = [{ value:"-1", text:"--" }];
+  const dynamic = isTueOrThu
+    ? horarioOptions.filter(o => o.value !== "5:30")
+    : horarioOptions;
+
+  selectEl.innerHTML = "";
+  for (const opt of [...base, ...dynamic]) {
+    const o = document.createElement("option");
+    o.value = opt.value;
+    o.textContent = opt.text;
+    selectEl.appendChild(o);
+  }
+  selectEl.value = [...selectEl.options].some(o => o.value === current) ? current : "-1";
+}
+

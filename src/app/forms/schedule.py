@@ -68,6 +68,7 @@ class ScheduleForm:
             raise ValidationError("Telefone inválido")
         return tel
 
+
     def clean_data(self):
         raw = self.data.get("data")
         if not isinstance(raw, str):
@@ -79,11 +80,29 @@ class ScheduleForm:
 
         if date.weekday() >= 5:
             raise ValidationError("Escolha um dia útil (segunda a sexta)")
-
-        return raw
+        return raw  # mantém formato original 'YYYY-MM-DD'
 
     def clean_horario(self):
-        horario = self.data.get("horario", "").strip()
-        if not any(h["value"] == horario for h in horarioOptions):
+        horario = (self.data.get("horario") or "").strip()
+
+        # Primeiro: o valor precisa existir na lista base
+        base_values = {h["value"] for h in horarioOptions}
+        if horario not in base_values:
             raise ValidationError("Horário inválido")
+
+        # Agora aplicamos a regra dinâmica baseada na data
+        # Tenta usar a data já validada; se não houver, tenta parsear a crua
+        date_str = self.cleaned_data.get("data") or self.data.get("data")
+        try:
+            dt = datetime.strptime(date_str.strip(), "%Y-%m-%d")
+        except Exception:
+            # Se a data não for parseável aqui, deixe o clean_data acusar o erro
+            # e só rejeite horários obviamente inválidos
+            return horario
+
+        # Python: Monday=0, Tuesday=1, Thursday=3
+        is_tue_or_thu = dt.weekday() in (1, 3)
+        if is_tue_or_thu and horario == "5:30":
+            raise ValidationError("Horário 5:30 indisponível às terças e quintas")
+
         return horario

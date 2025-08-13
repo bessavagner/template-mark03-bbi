@@ -34,7 +34,7 @@ export class AppHero extends Component {
       "hero-content w-10/12 md:w-full max-w-full relative text-center " +
         "mt-20 mx-auto px-4 sm:px-6 lg:px-8 z-10"
     );
-    this.form = new ScheduleForm();
+    this.form = new ScheduleForm({ idNs: "hero" });
   }
 
   /** Monta o DOM interno */
