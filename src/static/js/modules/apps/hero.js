@@ -46,7 +46,6 @@ export class AppHero extends Component {
     this.addComponent(this._buildLeftPlaceholder());
     this.addComponent(this._buildContent(buttonTargetId));
     this.form.init();
-    console.log(this.form.fields);
 
     return this;
   }

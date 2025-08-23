@@ -21,5 +21,4 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   });
   ctaButton.render({ target: document.querySelector("#institucional-cta") });
-  console.log("Institutional script loaded");
 });

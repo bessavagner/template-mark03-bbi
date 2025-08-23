@@ -409,7 +409,6 @@ export class Popup extends Component {
 
     this.addClass("animate-fade-in");
     this.removeClass("hidden");
-    console.log("Classes do elemento", this.element.classList);
     this.state.isVisible = true;
 
     if (autoCloseMs > 0) {

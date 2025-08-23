@@ -162,7 +162,6 @@ export class ScheduleForm extends Form {
   }
   getFormData() {
     const data = super.getFormData();
-    console.log(data);
     return {
       nome_sobrenome: data.nomeSobrenome,
       email: data["emailTelefone.email"],
@@ -188,7 +187,6 @@ export class ScheduleForm extends Form {
       });
 
       const result = await response.json();
-      console.log("Resposta do servidor:", result);
       if (result?.popup) {
         this.popup.show(result.popup);
       } else {

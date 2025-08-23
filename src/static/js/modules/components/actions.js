@@ -103,14 +103,12 @@ export class AnchorToSection extends Anchor {
       onClick: (e) => {
         e.preventDefault();
         if (options.sectionTargetId) {
-          console.log(`Scrolling to section: ${sectionTarget}`);
           const element = document.getElementById(sectionTarget);
           if (element) {
             element.scrollIntoView({ behavior: "smooth" });
           }
         }
         if (href) {
-          console.log(`Navigating to href: ${href}`);
           window.location.href = href;
         }
       },
